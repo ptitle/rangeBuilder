@@ -9,7 +9,7 @@ Imports: alphahull, stringi, rgeos (>= 0.1-4), methods
 Depends: sp, raster, rgdal, R (>= 2.10)
 Suggests: parallel
 Description: Provides tools for filtering occurrence records, generating alpha-hull-derived range polygons and mapping species richness. 
-License: file LICENSE
+License: ACM
 URL: https://github.com/ptitle/rangeBuilder
 NeedsCompilation: no
 LazyData: true
