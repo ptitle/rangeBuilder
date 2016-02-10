@@ -6,6 +6,7 @@ before_install:
   cd ./rangeBuilder
 
 r_packages:
+  - rgdal 
   - covr
 
 after_success:
