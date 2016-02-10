@@ -1,31 +1,20 @@
-# Sample .travis.yml for R projects.
-#
-# See README.md for instructions, or for more configuration options,
-# see the wiki:
-#   https://github.com/craigcitro/r-travis/wiki
-
-language: c
+language: r
 
 sudo: required
 
 before_install:
-  - cd ./rangeBuilder
-  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
-  - chmod 755 ./travis-tool.sh
-  - ./travis-tool.sh bootstrap
+  cd ./rangeBuilder
 
-install:
-  - ./travis-tool.sh install_deps
-  
-script: ./travis-tool.sh run_tests
+r_binary_packages:
+  - alphahull
+  - stringi
+  - rgeos
+  - sp
+  - raster
+  - rgdal
 
-after_script:
-  - ./travis-tool.sh dump_sysinfo
+r_packages:
+  - covr
 
-after_failure:
-  - ./travis-tool.sh dump_logs
-
-notifications:
-  email:
-    on_success: change
-    on_failure: change
+after_success:
+  - Rscript -e 'library(covr); coveralls()'
