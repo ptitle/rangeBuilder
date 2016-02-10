@@ -5,14 +5,6 @@ sudo: required
 before_install:
   cd ./rangeBuilder
 
-r_binary_packages:
-  - alphahull
-  - stringi
-  - rgeos
-  - sp
-  - raster
-  - rgdal
-
 r_packages:
   - covr
 
