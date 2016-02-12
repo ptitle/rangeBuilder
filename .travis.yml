@@ -9,5 +9,3 @@ r_binary_packages:
   - rgdal 
   - covr
 
-after_success:
-  - Rscript -e 'library(covr); coveralls()'
