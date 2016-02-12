@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/ptitle/rangeBuilder.svg?branch=master)](https://travis-ci.org/ptitle/rangeBuilder)
+[![CRAN version](http://www.r-pkg.org/badges/version/rangeBuilder)](http://cran.rstudio.com/web/packages/rangeBuilder/index.html)
 
 rangeBuilder
 =========
