@@ -9,9 +9,11 @@ r_binary_packages:
   - rgdal
   - sp
   - raster
-  - alphahull
   - stringi
   - rgeos
+
+r_packages:
+  - alphahull
 
 after_script:
  - ./travis-tool.sh dump_logs
