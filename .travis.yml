@@ -7,6 +7,11 @@ before_install:
 
 r_binary_packages:
   - rgdal
+  - sp
+  - raster
+  - alphahull
+  - stringi
+  - rgeos
 
 after_script:
  - ./travis-tool.sh dump_logs
