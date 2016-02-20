@@ -19,7 +19,7 @@ filterByProximity <- function(xy, dist, mapUnits = FALSE, returnIndex = FALSE) {
 		}
 	}
 	diag(d) <- NA
-	close <- (d <= dist)
+	close <- d <= dist
 	diag(close) <- NA
 	closePts <- which(close, arr.ind = TRUE)
 	discard <- matrix(nrow = 2, ncol=2)
