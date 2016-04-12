@@ -19,7 +19,7 @@ getAcceptedNames(db)
 		genus and species
 	}
 	\item{db}{
-		the database to query, can be squamates, birds or mammals.
+		the database to query, can be squamates, birds, mammals or amphibians.
 	}
 }
 
@@ -28,11 +28,13 @@ getAcceptedNames(db)
 	The workhorse function for matching synonyms to accepted names is \code{\link{synonymMatch}}.
 	The functions here are more simple, and are intended to be complementary to the main matching function.
 
-	The squamate database is a local copy of the Reptile Databse (\url{http://reptile-database.reptarium.cz/}), downloaded 5 October 2015, which will be updated periodically. The list of accepted names within this R package are those that are listed as such on the website. 
+	The squamate database is a local copy of the Reptile Database (\url{http://reptile-database.reptarium.cz/}), downloaded 11 April 2016, which will be updated periodically. The list of accepted names within this R package are those that are listed as such on the website. 
 
 	The bird database is the BirdLife Taxonomic Checklist v8.0 as downloaded from \url{http://www.birdlife.org/datazone/info/taxonomy}. 
 
 	The mammal database is Wilson and Reeder's Mammal Species of the World, 3rd edition, downloaded from \url{http://www.departments.bucknell.edu/biology/resources/msw3/}. 
+
+	The amphibian database is a local copy of the AmphibiaWeb taxonomy (\url{amphibiaweb.org/taxonomy/index.html}), downloaded 11 April 2016, which will be updated periodically.  
 
 	Citation:
 	

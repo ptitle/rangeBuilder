@@ -1,8 +1,8 @@
 Package: rangeBuilder
 Type: Package
 Title: Occurrence Filtering and Generation of Species Range Polygons
-Version: 1.0
-Date: 2016-01-05
+Version: 1.2
+Date: 2016-04-11
 Author: Pascal Title
 Maintainer: Pascal Title <ptitle@umich.edu>
 Imports: alphahull, stringi, rgeos (>= 0.1-4), methods

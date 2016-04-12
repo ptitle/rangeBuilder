@@ -1,3 +1,9 @@
 Changes in rangeBuilder
 2016-01-02
   * initial CRAN submission
+2016-02-24
+  * citation update
+2016-04-11
+  * update of Reptile Database data
+  * addition of AmphibiaWeb taxonomy and synonyms
+  * new function to measure coordinate precision error

@@ -13,8 +13,8 @@ Provides tools for filtering occurrence records, generating alpha-hull-derived r
 \tabular{ll}{
 Package: \tab rangeBuilder\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2016-01-02\cr
+Version: \tab 1.2\cr
+Date: \tab 2016-04-11\cr
 License: \tab GPL-2 | GPL-3\cr
 }
 

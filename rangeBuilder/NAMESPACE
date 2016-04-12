@@ -23,6 +23,7 @@ export(richnessRaster)
 export(transparentColor)
 export(filterByLand)
 export(getExtentOfList)
+export(coordError)
 
   importFrom("grDevices", "col2rgb", "colorRampPalette", "rgb", "terrain.colors")
   importFrom("graphics", "axis", "grconvertX", "grconvertY", "par", "rect")

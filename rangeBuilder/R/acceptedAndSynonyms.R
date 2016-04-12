@@ -20,8 +20,13 @@ getSynonymsFromAccepted <- function(sp, db) {
 			stop('Sp not an accepted species name.')
 		}
 		return(mammalList[[which(names(mammalList) == sp)]])
+	} else if (db == 'amphibians') {
+		if (!sp %in% names(amphibList)) {
+			stop('Sp not an accepted species name.')
+		}
+		return(amphibList[[which(names(amphibList) == sp)]])		
 	} else {
-		stop('db currently only squamates, birds or mammals.')
+		stop('db currently only squamates, birds, mammals or amphibians.')
 	}
 }
 
@@ -37,8 +42,10 @@ getAcceptedFromSynonym <- function(sp, db) {
 		db <- mammalList
 	} else if (db == 'birds') {
 		db <- birdList
+	} else if (db == 'amphibians') {
+		db <- amphibList
 	} else {
-		stop('db currently only squamates, birds or mammals.')
+		stop('db currently only squamates, birds, mammals or amphibians.')
 	}
 	
 	if (!sp %in% unlist(db)) {
@@ -58,7 +65,9 @@ getAcceptedNames <- function(db) {
 		return(names(mammalList))
 	} else if (db == 'birds') {
 		return(names(birdList))
+	} else if (db == 'amphibians') {
+		return(names(amphibList))
 	} else {
-		stop('db currently only squamates, birds or mammals.')
+		stop('db currently only squamates, birds, mammals or amphibians.')
 	}
 }

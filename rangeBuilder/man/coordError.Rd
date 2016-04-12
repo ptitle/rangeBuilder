@@ -1,0 +1,51 @@
+\name{coordError}
+\alias{coordError}
+\title{
+Coordinate error
+}
+\description{
+Calculates the potential error in coordinates due to lack of coordinate precision. 
+}
+\usage{
+coordError(coords, nthreads = 1)
+}
+\arguments{
+	\item{coords}{
+		longitude and latitude in decimal degrees, either as a long/lat vector, or as a 2-column table. Can be either as numeric
+		or character format. 
+	}
+	\item{nthreads}{
+		number of threads to use for parallelization of the function. 
+		The R package \code{parallel} must be loaded for \code{nthreads > 1}.
+	}
+}
+
+\details{
+	This function assumes that the true precision of the coordinates is equivalent to the greatest number of decimals in either the longitude or latitude that are not trailing zeroes. In other words: \cr
+	\code{(-130.45670, 45.53000)} is interpreted as \code{(-130.4567, 45.5300)} \cr
+	\code{(-130.20000, 45.50000)} is interpreted as \code{(-130.2, 45.5)} \cr
+
+
+	If we use \code{(-130.45670, 45.53000)} as an example, these coordinates are interpreted as \code{(-130.4567, 45.5300)} and the greatest possible error is inferred as two endpoints:
+	\code{(-130.45670, 45.53000)} and \code{(-130.45679, 45.53009)} \cr
+
+
+	The distance between these two is then calculated and returned. 
+}
+
+\value{
+	Returns a vector of coordinate error in meters. 
+}
+\author{
+	Pascal Title
+}
+
+\examples{
+data(crotalus)
+
+xy <- crotalus[1:100, c('decimallongitude','decimallatitude')]
+
+coordError(xy)
+}
+ 
+

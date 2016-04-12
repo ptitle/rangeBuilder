@@ -1,9 +1,9 @@
 ## Function, that will take a taxon name and search for (in this order) strict matches, fuzzy matches, strict synonym matches, and fuzzy synonym matches. 
 
-# Function for birds and mammals
+# Function for birds, mammals, amphibians
 
 
-synonymMatch_birdMammal <- function(x, db, fuzzy = TRUE, fuzzyDist = 2, advancedSearch = TRUE, searchSynonyms = TRUE, returnMultiple = FALSE, printReport = TRUE, nthreads = 1) {
+synonymMatch_other <- function(x, db, fuzzy = TRUE, fuzzyDist = 2, advancedSearch = TRUE, searchSynonyms = TRUE, returnMultiple = FALSE, printReport = TRUE, nthreads = 1) {
 
 	if (nthreads > 1) {
 		if (!"package:parallel" %in% search()) {
@@ -15,8 +15,8 @@ synonymMatch_birdMammal <- function(x, db, fuzzy = TRUE, fuzzyDist = 2, advanced
 		stop('taxon must be a vector of taxon names.')
 	}
 
-	if (!db %in% c('birds','mammals')) {
-		stop('db must be either birds or mammals')
+	if (!db %in% c('birds', 'mammals', 'amphibians')) {
+		stop('db must be either birds, mammals or amphibians.')
 	}
 
 	if (db == 'birds') {
@@ -24,6 +24,9 @@ synonymMatch_birdMammal <- function(x, db, fuzzy = TRUE, fuzzyDist = 2, advanced
 	}
 	if (db == 'mammals') {
 		synonymDB <- mammalList
+	}
+	if (db == 'amphibians') {
+		synonymDB <- amphibList
 	}
 	
 	# convert NULL to NA
