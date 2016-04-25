@@ -79,7 +79,11 @@ coordError <- function(coords, nthreads = 1) {
 		if (class(coords) == 'numeric') {
 			coords <- as.character(coords)
 		}
-	res <- calcError(coords)
+		# if either coordinate is invalid, replace with NA to trip that check later
+		if (abs(as.numeric(coords[1])) > 180 | abs(as.numeric(coords[2])) > 90) {
+			coords[1] <- NA
+		}
+		res <- calcError(coords)
 	}
 	
 	#table of coordinates
@@ -91,6 +95,14 @@ coordError <- function(coords, nthreads = 1) {
 			stop('coords must be 2 columns: long and lat.')
 		}
 		mode(coords) <- 'character'
+		# if either coordinate is invalid, replace with NA to trip that check later
+		if (any(abs(as.numeric(coords[,1])) > 180)) {
+			coords[which(abs(as.numeric(coords[,1])) > 180), 1] <- NA
+		}
+		if (any(abs(as.numeric(coords[,2])) > 90)) {
+			coords[which(abs(as.numeric(coords[,2])) > 90), 1] <- NA
+		}
+		
 		
 		if (nthreads > 1) {
 			cl <- parallel::makePSOCKcluster(nthreads)
