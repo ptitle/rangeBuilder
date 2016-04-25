@@ -94,7 +94,8 @@ coordError <- function(coords, nthreads = 1) {
 		
 		if (nthreads > 1) {
 			cl <- parallel::makePSOCKcluster(nthreads)
-			parallel::clusterExport(cl = cl, varlist = c('coords', 'calcError', 'SpatialPoints', 'CRS', 'spTransform', 'gDistance'), envir = environment())
+			parallel::clusterExport(cl = cl, varlist = c('coords', 'calcError', 'SpatialPoints', 'CRS', 'spTransform'), envir = environment())
+			parallel::clusterExport(cl = cl, varlist = 'gDistance', envir = environment(rgeos::gDistance))
 			res <- parallel::parApply(cl, coords, 1, calcError)
 			parallel::stopCluster(cl)
 		} else {
