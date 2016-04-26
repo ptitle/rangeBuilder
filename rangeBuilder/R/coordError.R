@@ -97,17 +97,20 @@ coordError <- function(coords, nthreads = 1) {
 			stop('coords must be 2 columns: long and lat.')
 		}
 		mode(coords) <- 'character'
-		# if either coordinate is invalid, replace with NA to trip that check later
-		if (!all(is.na(coords[,1]))) {
-			if (any(abs(as.numeric(coords[,1])) > 180)) {
-				coords[which(abs(as.numeric(coords[,1])) > 180), 1] <- NA
-			}
+	
+		# to simplify handling, convert any NAs to long 190 and lat 100 for now
+		if (any(is.na(coords[,1]))) {
+			coords[which(is.na(coords[,1])),1] <- "190"
 		}
-		if (!all(is.na(coords[,2]))) {
-			if (any(abs(as.numeric(coords[,2])) > 90)) {
-				coords[which(abs(as.numeric(coords[,2])) > 90), 1] <- NA
-			}
+		if (any(is.na(coords[,2]))) {
+			coords[which(is.na(coords[,2])),2] <- "100"
 		}
+		
+		#now all bad records have invalid coordinates, no NA
+		# switch back to NA
+		coords[which(abs(as.numeric(coords[,1])) > 180), 1] <- NA
+		coords[which(abs(as.numeric(coords[,2])) > 90), 2] <- NA
+		
 		
 		
 		if (nthreads > 1) {
