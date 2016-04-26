@@ -70,18 +70,20 @@ coordError <- function(coords, nthreads = 1) {
 	
 	# vector of coordinates
 	if (is.vector(coords)) {
-		if (class(coords) != 'numeric' & class(coords) != 'character') {
-			stop('coords must be of class numeric or character.')
-		}
-		if (length(coords) != 2) {
-			stop('coords must be of length 2: long, lat.')
-		}
-		if (class(coords) == 'numeric') {
-			coords <- as.character(coords)
-		}
-		# if either coordinate is invalid, replace with NA to trip that check later
-		if (abs(as.numeric(coords[1])) > 180 | abs(as.numeric(coords[2])) > 90) {
-			coords[1] <- NA
+		if (!all(is.na(coords))) {
+			if (class(coords) != 'numeric' & class(coords) != 'character') {
+				stop('coords must be of class numeric or character.')
+			}
+			if (length(coords) != 2) {
+				stop('coords must be of length 2: long, lat.')
+			}
+			if (class(coords) == 'numeric') {
+				coords <- as.character(coords)
+			}
+			# if either coordinate is invalid, replace with NA to trip that check later
+			if (abs(as.numeric(coords[1])) > 180 | abs(as.numeric(coords[2])) > 90) {
+				coords[1] <- NA
+			}
 		}
 		res <- calcError(coords)
 	}
@@ -96,11 +98,15 @@ coordError <- function(coords, nthreads = 1) {
 		}
 		mode(coords) <- 'character'
 		# if either coordinate is invalid, replace with NA to trip that check later
-		if (any(abs(as.numeric(coords[,1])) > 180)) {
-			coords[which(abs(as.numeric(coords[,1])) > 180), 1] <- NA
+		if (!all(is.na(coords[,1]))) {
+			if (any(abs(as.numeric(coords[,1])) > 180)) {
+				coords[which(abs(as.numeric(coords[,1])) > 180), 1] <- NA
+			}
 		}
-		if (any(abs(as.numeric(coords[,2])) > 90)) {
-			coords[which(abs(as.numeric(coords[,2])) > 90), 1] <- NA
+		if (!all(is.na(coords[,2]))) {
+			if (any(abs(as.numeric(coords[,2])) > 90)) {
+				coords[which(abs(as.numeric(coords[,2])) > 90), 1] <- NA
+			}
 		}
 		
 		
