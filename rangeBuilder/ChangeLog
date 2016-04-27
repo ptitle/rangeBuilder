@@ -7,3 +7,7 @@ Changes in rangeBuilder
   * update of Reptile Database data
   * addition of AmphibiaWeb taxonomy and synonyms
   * new function to measure coordinate precision error
+ 2016-4-
+  * update of Reptile Database data
+  * bug fixes to coordError
+  * update to standardized country lookup internal dataset (in progress)
