@@ -1,7 +1,7 @@
 # Function to create alpha hull that encompasses x % of occurrences
 
 
-getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000, coordHeaders = c('Longitude', 'Latitude'), clipToCoast = TRUE, proj = "+proj=longlat +datum=WGS84", verbose = FALSE) {
+getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000, coordHeaders = c('Longitude', 'Latitude'), clipToCoast = TRUE, proj = "+proj=longlat +datum=WGS84", verbose = FALSE, alpha = 3) {
 
 	if (proj != "+proj=longlat +datum=WGS84") {
 		stop("Currently, proj can only be '+proj=longlat +datum=WGS84'.")
@@ -29,7 +29,6 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 
 	#create alpha hull and calculate fraction of occurrences that fall within
 	#continue until fraction is reached
-	alpha = 3
 	problem <- FALSE
 	if (verbose) {cat('\talpha:', alpha, '\n')}
 
