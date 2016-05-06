@@ -108,7 +108,7 @@ richnessRaster <- function(ranges, resolution = 1, resUnits = 'degrees', extent 
 	
 	
 	# if rasterstack as input
-	if (class(ranges) == 'RasterStack') {
+	if (class(ranges) %in% c('RasterStack', 'RasterBrick')) {
 		
 		#check that all rasters have values
 		valCheck <- minValue(ranges)
