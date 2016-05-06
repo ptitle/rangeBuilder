@@ -1,7 +1,7 @@
 # Function to create alpha hull that encompasses x % of occurrences
 
 
-getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000, coordHeaders = c('Longitude', 'Latitude'), clipToCoast = TRUE, proj = "+proj=longlat +datum=WGS84", verbose = FALSE) {
+getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000, initialAlpha = 3, coordHeaders = c('Longitude', 'Latitude'), clipToCoast = TRUE, proj = "+proj=longlat +datum=WGS84", alphaIncrement = 1, verbose = FALSE) {
 
 	if (proj != "+proj=longlat +datum=WGS84") {
 		stop("Currently, proj can only be '+proj=longlat +datum=WGS84'.")
@@ -29,14 +29,14 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 
 	#create alpha hull and calculate fraction of occurrences that fall within
 	#continue until fraction is reached
-	alpha = 3
+	alpha <- initialAlpha
 	problem <- FALSE
 	if (verbose) {cat('\talpha:', alpha, '\n')}
 
 	hull <- try(alphahull::ahull(data.frame(x),alpha = alpha))
 	while ('try-error' %in% class(hull)) {
 		if (verbose) {cat('\talpha:', alpha, '\n')}
-		alpha <- alpha + 1
+		alpha <- alpha + alphaIncrement
 		hull <- try(alphahull::ahull(data.frame(x),alpha = alpha))
 		if (alpha > 500) {
 			problem <- TRUE
@@ -51,7 +51,7 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 	}
  
 	while (is.null(hull) | 'try-error' %in% class(hull) | !rgeos::gIsValid(hull, reason = TRUE) %in% c(TRUE, 'Valid Geometry')) {
-		alpha <- alpha + 1
+		alpha <- alpha + alphaIncrement
 		if (verbose) {cat('\talpha:', alpha, '\n')}
 		hull <- try(ah2sp(alphahull::ahull(data.frame(x),alpha=alpha), proj4string=CRS('+proj=longlat +datum=WGS84')))
 		if (!is.null(hull)) {
@@ -67,11 +67,11 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 	buffered <- FALSE
 
 	while (any(length(hull@polygons[[1]]@Polygons) > partCount, length(which(pointWithin) == TRUE)/length(x) < fraction)) {
-	    alpha <- alpha + 1
+	    alpha <- alpha + alphaIncrement
 	    if (verbose) {cat('\talpha:', alpha, '\n')}
 	    hull <- try(alphahull::ahull(data.frame(x), alpha = alpha))
 	    while ('try-error' %in% class(hull)) {
-	      alpha <- alpha + 1
+	      alpha <- alpha + alphaIncrement
 	      hull <- try(alphahull::ahull(data.frame(x),alpha = alpha))
 	    }
 		hull <- ah2sp(hull, proj4string = CRS('+proj=longlat +datum=WGS84'))

@@ -9,8 +9,9 @@ distribution of the coordinates.
 }
 \usage{
 getDynamicAlphaHull(x, fraction = 0.95, partCount = 3, buff = 10000, 
-coordHeaders = c('Longitude', 'Latitude'), clipToCoast = TRUE, 
-proj = "+proj=longlat +datum=WGS84", verbose = FALSE)
+initialAlpha = 3, coordHeaders = c('Longitude', 'Latitude'), 
+clipToCoast = TRUE, proj = "+proj=longlat +datum=WGS84", 
+alphaIncrement = 1, verbose = FALSE)
 }
 \arguments{
 	\item{x}{
@@ -25,6 +26,9 @@ proj = "+proj=longlat +datum=WGS84", verbose = FALSE)
 	\item{buff}{
 		buffering distance in meters
 	}
+	\item{initialAlpha}{
+		the starting value for alpha
+	}
 	\item{coordHeaders}{
 		the column names for the longitude and latitude columns, respectively.
 		If x has two columns, these are assumed to be longitude and latitude, and 
@@ -38,6 +42,9 @@ proj = "+proj=longlat +datum=WGS84", verbose = FALSE)
 		the projection information for x. The default is currently the only 
 		supported option. 
 	}
+	\item{alphaIncrement}{
+		the amount to increase alpha with each iteration
+	}
 	\item{verbose}{
 		prints the alpha value to the console, intended for debugging.
 	}
@@ -46,8 +53,9 @@ proj = "+proj=longlat +datum=WGS84", verbose = FALSE)
 \details{
 
 	From a set of coordinates, this function will create an alpha hull with 
-	\code{alpha = 3}, and will then increase \code{alpha} by 1 until both the 
-	\code{fraction} and \code{partCount} conditions are met. 
+	\code{alpha = initialAlpha}, and will then increase \code{alpha} by 
+	\code{alphaIncrement} until both the \code{fraction} and \code{partCount} 
+	conditions are met. 
 
 	If the conditions cannot be satisfied, then a minimum convex hull is returned. 
 
