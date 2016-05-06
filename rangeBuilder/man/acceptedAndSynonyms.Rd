@@ -28,7 +28,7 @@ getAcceptedNames(db)
 	The workhorse function for matching synonyms to accepted names is \code{\link{synonymMatch}}.
 	The functions here are more simple, and are intended to be complementary to the main matching function.
 
-	The squamate database is a local copy of the Reptile Database (\url{http://reptile-database.reptarium.cz/}), downloaded 26 April 2016, which will be updated periodically. The list of accepted names within this R package are those that are listed as such on the website. 
+	The squamate database is a local copy of the Reptile Database (\url{http://reptile-database.reptarium.cz/}), downloaded 30 April 2016, which will be updated periodically. The list of accepted names within this R package are those that are listed as such on the website. 
 
 	The bird database is the BirdLife Taxonomic Checklist v8.0 as downloaded from \url{http://www.birdlife.org/datazone/info/taxonomy}. 
 
@@ -42,7 +42,7 @@ getAcceptedNames(db)
 
 	Don E. Wilson & DeeAnn M. Reeder (editors). 2005. Mammal Species of the World. A Taxonomic and Geographic Reference (3rd ed), Johns Hopkins University Press, 2,142 pp.
 
-	Uetz P., Hosek, J. (ed.). 2016. The Reptile Database, http://www.reptile-database.org (accessed 26 April 2016).  
+	Uetz P., Hosek, J. (ed.). 2016. The Reptile Database, http://www.reptile-database.org (accessed 30 April 2016).  
 
 
 }
