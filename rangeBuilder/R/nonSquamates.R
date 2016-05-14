@@ -41,6 +41,10 @@ synonymMatch_other <- function(x, db, fuzzy = TRUE, fuzzyDist = 2, advancedSearc
 	x <- gsub(' ', '_', x)
 	uniqueSp <- unique(x)
 
+	# if only one word found, add an NA
+	x[!grepl('_', x)] <- paste0(x[!grepl('_', x)], '_NA')
+	uniqueSp[!grepl('_', uniqueSp)] <- paste0(uniqueSp[!grepl('_', uniqueSp)], '_NA')
+
 	#return NA for genus only, or species only
 	res[grepl("_NA$|^NA_", x)] <- NA
 	uniqueSp <- uniqueSp[!grepl("_NA$|^NA_", uniqueSp)]
@@ -76,19 +80,21 @@ synonymMatch_other <- function(x, db, fuzzy = TRUE, fuzzyDist = 2, advancedSearc
 		
 		# create version of synonym list with all combinations of genus/species and alternate latin endings
 		for (i in 1:length(synonymDB)) {
-			allgenera <- unlist(unique(lapply(synonymDB[[i]], function(x) strsplit(x, split='_')[[1]][1])))
-			allspecies <- unlist(unique(lapply(synonymDB[[i]], function(x) strsplit(x, split='_')[[1]][2])))
-	
-			#add masculine/feminine variations
-			allspecies <- append(allspecies, gsub('a$', 'um', grep('a$', allspecies, value=TRUE)))
-			allspecies <- append(allspecies, gsub('a$', 'is', grep('a$', allspecies, value=TRUE)))
-			allspecies <- append(allspecies, gsub('a$', 'us', grep('a$', allspecies, value=TRUE)))
-			allspecies <- append(allspecies, gsub('um$|is$|us$', 'a', grep('um$|is$|us$', allspecies, value = TRUE)))
-			allspecies <- unique(allspecies)
-	
-			#create all combinations
-			allcombos <- cbind(rep(allgenera, each=length(allspecies)), rep(allspecies, times = length(allgenera)))
-			synonymDB[[i]] <- unique(paste(allcombos[,1], allcombos[,2],sep='_'))
+			if (!all(is.na(synonymDB[[i]]))) {
+				allgenera <- unlist(unique(lapply(synonymDB[[i]], function(x) strsplit(x, split='_')[[1]][1])))
+				allspecies <- unlist(unique(lapply(synonymDB[[i]], function(x) strsplit(x, split='_')[[1]][2])))
+		
+				#add masculine/feminine variations
+				allspecies <- append(allspecies, gsub('a$', 'um', grep('a$', allspecies, value=TRUE)))
+				allspecies <- append(allspecies, gsub('a$', 'is', grep('a$', allspecies, value=TRUE)))
+				allspecies <- append(allspecies, gsub('a$', 'us', grep('a$', allspecies, value=TRUE)))
+				allspecies <- append(allspecies, gsub('um$|is$|us$', 'a', grep('um$|is$|us$', allspecies, value = TRUE)))
+				allspecies <- unique(allspecies)
+		
+				#create all combinations
+				allcombos <- cbind(rep(allgenera, each=length(allspecies)), rep(allspecies, times = length(allgenera)))
+				synonymDB[[i]] <- unique(paste(allcombos[,1], allcombos[,2],sep='_'))
+			}
 		}
 		
 		if (nthreads > 1) {

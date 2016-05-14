@@ -2,6 +2,8 @@
 
 
 synonymMatch <- function(sp, db, fuzzy = TRUE, fuzzyDist = 2, advancedSearch = TRUE, searchSynonyms = TRUE, year1 = 1950, year2 = 1900, returnMultiple = FALSE, printReport = TRUE, nthreads = 1) {
+	
+	db <- match.arg(db, c('squamates', 'birds', 'mammals', 'amphibians'))
 
 	if (!db %in% c('squamates', 'birds', 'mammals', 'amphibians')) {
 		stop('db can currently only be squamates, birds, mammals or amphibians.')

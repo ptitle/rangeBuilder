@@ -16,6 +16,10 @@ synonymMatchByYear_repDB <- function(x, year1 = 1950, year2 = 1900, fuzzy = TRUE
 	
 	x <- gsub(' ', '_', x)
 	uniqueSp <- unique(x)
+	
+	# if only one word found, add an NA
+	x[!grepl('_', x)] <- paste0(x[!grepl('_', x)], '_NA')
+	uniqueSp[!grepl('_', uniqueSp)] <- paste0(uniqueSp[!grepl('_', uniqueSp)], '_NA')
 
 	#return NA for genus only, or species only
 	res[grepl("_NA$|^NA_", x)] <- NA
