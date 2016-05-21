@@ -7,11 +7,15 @@ Standardize country name
 Standardizes country names to the list of countries used internally by this package.
 }
 \usage{
-standardizeCountry(country, nthreads = 1)
+standardizeCountry(country, fuzzyDist = 2, nthreads = 1)
 }
 \arguments{
 	\item{country}{
 		character vector of country names
+	}
+	\item{fuzzyDist}{
+		for fuzzy searching, the maximum string distance allowed for a match;
+		if 0, fuzzy searching is disabled.
 	}
 	\item{nthreads}{
 		number of threads to use for parallelization of the function. 
@@ -21,6 +25,8 @@ standardizeCountry(country, nthreads = 1)
 
 \details{
 	This package interacts with data from the Global Invasive Species Database (GISD), the Reptile Database, as well as global maps that were used to generate the internal dataset used by \code{\link{closestCountry}}. Efforts have been made to make country names consistent across these separate datasets. This function can be used to convert the user's \code{Country} field to the same standardized set. 
+
+	Fuzzy matching uses the function \code{\link{adist}}.
 
 	Parallelization with \code{nthreads} becomes more time-efficient only if the input vector is of multiple thousands of country names.
 }
@@ -33,6 +39,6 @@ standardizeCountry(country, nthreads = 1)
 }
 
 \examples{
-standardizeCountry(c("Russian Federation", "USA", "Plurinational State of Bolivia"))
+standardizeCountry(c("Russian Federation", "USA", "Plurinational State of Bolivia", "Brezil"))
 }
  

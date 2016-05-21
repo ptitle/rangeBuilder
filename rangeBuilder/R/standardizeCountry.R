@@ -1,6 +1,6 @@
 # standardize country name to the set used in the rangeBuilder package
 
-standardizeCountry <- function(country, nthreads = 1) {
+standardizeCountry <- function(country, fuzzyDist = 2, nthreads = 1) {
 	
 	if (nthreads > 1) {
 		if (!"package:parallel" %in% search()) {
@@ -17,26 +17,57 @@ standardizeCountry <- function(country, nthreads = 1) {
 	country <- gsub('\\s+', ' ', country)
 	country <- trim(country)
 	
+	# function to look at each entry in countryList and look for match
+	matchCountry <- function(val, countryList, fuzzyDist = fuzzyDist) {
+		
+		# first, test for exact match
+		ind <- which(sapply(countryList, function(y) val %in% y) == TRUE)
+
+		if (length(ind) == 0) {
+			# second, test for fuzzy matching with accepted names
+			d <- adist(val, names(countryList))
+			mind <- which.min(d)
+			if (d[mind] <= fuzzyDist) {
+				ind <- mind
+			} else {
+				# third, check each alternative with fuzzy match
+				d <- sapply(countryList, function(y) adist(val, y))
+				d <- sapply(d, min)
+				mind <- which.min(d)
+				if (d[mind] <= fuzzyDist) {
+					ind <- mind
+				}
+			}	
+		}
+		if (length(ind) == 0) {
+			return('')
+		} else {
+			return(names(countryList)[ind])
+		}
+	}
+	
 	if (nthreads > 1) {
 		cl <- parallel::makePSOCKcluster(nthreads)
 		parallel::clusterExport(cl = cl, varlist = c('country', 'countryList'), envir = environment())
 		res <- parallel::parSapply(cl, country, function(x) {
-			if (x %in% unlist(countryList)) {
-				ind <- which(sapply(countryList, function(y) x %in% y) == TRUE)
-				return(names(countryList)[ind])
-			} else {
-				return('')
-			}
+			return(matchCountry(x, countryList, fuzzyDist = fuzzyDist))
+			# if (x %in% unlist(countryList)) {
+				# ind <- which(sapply(countryList, function(y) any(agrepl(x, y, max.distance = fuzzyDist))) == TRUE)
+				# return(names(countryList)[ind])
+			# } else {
+				# return('')
+			# }
 		}, simplify = TRUE, USE.NAMES = FALSE)
 		parallel::stopCluster(cl)
 	} else {	
 		res <- sapply(country, function(x) {
-			if (x %in% unlist(countryList)) {
-				ind <- which(sapply(countryList, function(y) x %in% y) == TRUE)
-				return(names(countryList)[ind])
-			} else {
-				return('')
-			}
+			return(matchCountry(x, countryList, fuzzyDist = fuzzyDist))
+			# if (x %in% unlist(countryList)) {
+				# ind <- which(sapply(countryList, function(y) any(agrepl(x, y, max.distance = fuzzyDist))) == TRUE)
+				# return(names(countryList)[ind])
+			# } else {
+				# return('')
+			# }
 		}, simplify = TRUE, USE.NAMES = FALSE)
 	
 	}
