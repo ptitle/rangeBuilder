@@ -14,6 +14,7 @@ standardizeCountry <- function(country, fuzzyDist = 2, nthreads = 1) {
 	country <- stringi::stri_trans_general(country, "Latin-ASCII")
 	country <- gsub('(^|\\s)ST\\.?\\s', 'SAINT ', country)
 	country <- gsub('\\?|\\[|\\]', '', country)
+	country <- gsub('\\/', '', country)
 	country <- gsub('\\s+', ' ', country)
 	country <- trim(country)
 	
@@ -51,25 +52,12 @@ standardizeCountry <- function(country, fuzzyDist = 2, nthreads = 1) {
 		parallel::clusterExport(cl = cl, varlist = c('country', 'countryList'), envir = environment())
 		res <- parallel::parSapply(cl, country, function(x) {
 			return(matchCountry(x, countryList, fuzzyDist = fuzzyDist))
-			# if (x %in% unlist(countryList)) {
-				# ind <- which(sapply(countryList, function(y) any(agrepl(x, y, max.distance = fuzzyDist))) == TRUE)
-				# return(names(countryList)[ind])
-			# } else {
-				# return('')
-			# }
 		}, simplify = TRUE, USE.NAMES = FALSE)
 		parallel::stopCluster(cl)
 	} else {	
 		res <- sapply(country, function(x) {
 			return(matchCountry(x, countryList, fuzzyDist = fuzzyDist))
-			# if (x %in% unlist(countryList)) {
-				# ind <- which(sapply(countryList, function(y) any(agrepl(x, y, max.distance = fuzzyDist))) == TRUE)
-				# return(names(countryList)[ind])
-			# } else {
-				# return('')
-			# }
-		}, simplify = TRUE, USE.NAMES = FALSE)
-	
+		}, simplify = TRUE, USE.NAMES = FALSE)	
 	}
 	
 	return(res)
