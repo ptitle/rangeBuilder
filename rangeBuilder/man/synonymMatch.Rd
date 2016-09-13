@@ -68,13 +68,15 @@ synonymMatch(sp, db, fuzzy = TRUE, fuzzyDist = 2, advancedSearch = TRUE,
 	Parallelization becomes time-efficient with as few as 15 unique taxon names.
 	
 
-	The squamate database is a local copy of the Reptile Database (\url{http://reptile-database.reptarium.cz/}), downloaded 30 April 2016, which will be updated periodically. The list of accepted names within this R package are those that are listed as such on the website. 
+	The squamate database is a local copy of the Reptile Database (\url{http://reptile-database.reptarium.cz/}), which will be updated periodically. The list of accepted names within this R package are those that are listed as such on the website. 
 
 	The bird database is the BirdLife Taxonomic Checklist v8.0 as downloaded from \url{http://www.birdlife.org/datazone/info/taxonomy}. 
 
 	The mammal database is Wilson and Reeder's Mammal Species of the World, 3rd edition, downloaded from \url{http://www.departments.bucknell.edu/biology/resources/msw3/}. 
 
-	The amphibian database is a local copy of the AmphibiaWeb taxonomy (\url{amphibiaweb.org/taxonomy/index.html}), downloaded 11 April 2016, which will be updated periodically.  
+	The amphibian database is a local copy of the AmphibiaWeb taxonomy (\url{amphibiaweb.org/taxonomy/index.html}), which will be updated periodically.
+	
+	To see when these datasets were last updated for this R package, run \code{\link{downloadDates}}.
 
 
 	Citation:
@@ -83,7 +85,7 @@ synonymMatch(sp, db, fuzzy = TRUE, fuzzyDist = 2, advancedSearch = TRUE,
 
 	Don E. Wilson & DeeAnn M. Reeder (editors). 2005. Mammal Species of the World. A Taxonomic and Geographic Reference (3rd ed), Johns Hopkins University Press, 2,142 pp.
 
-	Uetz P., Hosek, J. (ed.). 2016. The Reptile Database, http://www.reptile-database.org (accessed 30 April 2016).  
+	Uetz P., Hosek, J. (ed.). 2016. The Reptile Database, http://www.reptile-database.org.  
 
 }
 

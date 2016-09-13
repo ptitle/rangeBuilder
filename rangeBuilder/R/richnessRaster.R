@@ -42,6 +42,7 @@ richnessRaster <- function(ranges, resolution = 1, resUnits = 'degrees', extent 
 			if ('auto' %in% extent) {
 				#get overall extent
 				masterExtent <- getExtentOfList(ranges)
+				masterExtent <- list(minLong = masterExtent@xmin, maxLong = masterExtent@xmax, minLat = masterExtent@ymin, maxLat = masterExtent@ymax)
 			} else if (is.numeric(extent) & length(extent) == 4) {
 				masterExtent <- list(minLong = extent[1], maxLong = extent[2], minLat = extent[3], maxLat = extent[4])
 			} else {

@@ -11,7 +11,7 @@ standardizeCountry(country, fuzzyDist = 2, nthreads = 1)
 }
 \arguments{
 	\item{country}{
-		character vector of country names
+		character vector of country names or ISO codes
 	}
 	\item{fuzzyDist}{
 		for fuzzy searching, the maximum string distance allowed for a match;
@@ -32,7 +32,7 @@ standardizeCountry(country, fuzzyDist = 2, nthreads = 1)
 }
 
 \value{
-	Character vector of the standardized country names. If no match found, "" is returned. 
+	Character vector of the standardized country names. If no match found, \code{""} is returned. 
 }
 \author{
 	Pascal Title

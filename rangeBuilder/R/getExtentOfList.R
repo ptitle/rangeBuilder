@@ -5,5 +5,12 @@ getExtentOfList <- function(shapes) {
 	maxLong <- max(sapply(x, function(x) x[3], simplify = TRUE))
 	minLat <- min(sapply(x, function(x) x[2], simplify = TRUE))
 	maxLat <- max(sapply(x, function(x) x[4], simplify = TRUE))
-	return(list(minLong = minLong, maxLong = maxLong, minLat = minLat, maxLat = maxLat))
+	
+	res <- extent(shapes[[1]])
+	res@xmin <- minLong
+	res@xmax <- maxLong
+	res@ymin <- minLat
+	res@ymax <- maxLat
+	
+	return(res)
 }	

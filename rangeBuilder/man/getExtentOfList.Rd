@@ -17,7 +17,7 @@ getExtentOfList(shapes)
 }
 }
 \value{
-a list with min longitude, max longitude, min latitude, max latitude.
+an object of class extent
 }
  
 \author{

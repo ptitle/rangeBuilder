@@ -9,5 +9,9 @@ Changes in rangeBuilder
   * new function to measure coordinate precision error
  2016-4-
   * update of Reptile Database data
+  * minor bug fix in synonymMatch where multiple matches were returned regardless of
+  	whether or not that was requested.
   * bug fixes to coordError
-  * update to standardized country lookup internal dataset (in progress)
+  * add ability of richnessRaster to handle rasterBricks
+  * update citation information
+  * externalize alpha handling in getDynamicAlphaHull

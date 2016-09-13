@@ -24,9 +24,10 @@ queryGISD(species)
 	is native to one part of the country and invasive in another part of that country. See the 
 	GISD website for more detailed information.
 
-	This function queries a static version of the database acquired on January 15 2015.
-	This static version will be updated periodically. 
-}
+	This function queries a static version of the database, which will be updated periodically.
+	
+	To see when these datasets were last updated for this R package, run \code{\link{downloadDates}}.
+	}
 
 \value{
 	list with 3 elements

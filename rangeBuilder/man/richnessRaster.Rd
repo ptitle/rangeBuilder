@@ -140,7 +140,7 @@ richnessRaster(ranges, resolution = 1, resUnits = 'degrees',
 
 # # range creation requires at least 3 unique occurrences.
 # occCount <- sapply(crotalus, function(x) {
-	# nrow(x[!duplicated(x[,c('decimallongitude','decimallatitude')]),]))
+	# nrow(x[!duplicated(x[,c('decimallongitude','decimallatitude')]),])
 # })
 # crotalus <- crotalus[which(occCount > 3)]
 
