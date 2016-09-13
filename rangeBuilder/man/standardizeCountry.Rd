@@ -7,7 +7,7 @@ Standardize country name
 Standardizes country names to the list of countries used internally by this package.
 }
 \usage{
-standardizeCountry(country, fuzzyDist = 2, nthreads = 1)
+standardizeCountry(country, fuzzyDist = 1, nthreads = 1)
 }
 \arguments{
 	\item{country}{
