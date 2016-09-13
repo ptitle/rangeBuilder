@@ -8,10 +8,13 @@ Changes in rangeBuilder
   * addition of AmphibiaWeb taxonomy and synonyms
   * new function to measure coordinate precision error
  2016-4-
-  * update of Reptile Database data
+  * update of Reptile Database data and AmphibiaWeb data
   * minor bug fix in synonymMatch where multiple matches were returned regardless of
   	whether or not that was requested.
   * bug fixes to coordError
   * add ability of richnessRaster to handle rasterBricks
   * update citation information
   * externalize alpha handling in getDynamicAlphaHull
+  * add downloadDates function that reports dates that various datasets were acquired
+  * changed function getExtentOfList to return an object of class extent
+  * updated standardizeCountry to handle ISO-2 and ISO-3 country codes
