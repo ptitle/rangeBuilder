@@ -58,11 +58,17 @@ richnessRaster(ranges, resolution = 1, resUnits = 'degrees',
 	Control of resolution, projection and extent are all intended for
 	SpatialPolygon input. If rasters are input, then these manipulations should
 	be done beforehand. 
+	
+	This function expects that all input rasters have presence values (i.e., 
+	non-NA values). If any rasters have entirely NA cells, then the function will stop
+	with a warning, and the output will be the index in the rasterStack of those rasters.
 }
 
 \value{
 	If \code{speciesByCell = FALSE}, \cr
 	RasterLayer, where values represent counts of species. Counts of 0 are set to NA.
+	If the function stopped due to all-NA rasters, then the output is a numeric vector of
+	raster indices.
 
 
 	If \code{speciesByCell = TRUE}, \cr
