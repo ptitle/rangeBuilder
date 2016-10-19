@@ -21,5 +21,5 @@ Install Hadley Wickham's ```devtools```:
 Then, install ```rangeBuilder```:
 
 	require(devtools);
-	install_github("ptitle/rangeBuilder");
+	install_github("ptitle/rangeBuilder/rangeBuilder");
 
