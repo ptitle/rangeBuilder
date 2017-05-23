@@ -10,7 +10,7 @@ distribution of the coordinates.
 \usage{
 getDynamicAlphaHull(x, fraction = 0.95, partCount = 3, buff = 10000, 
 initialAlpha = 3, coordHeaders = c('Longitude', 'Latitude'), 
-clipToCoast = TRUE, proj = "+proj=longlat +datum=WGS84", 
+clipToCoast = 'terrestrial', proj = "+proj=longlat +datum=WGS84", 
 alphaIncrement = 1, verbose = FALSE)
 }
 \arguments{
@@ -35,8 +35,8 @@ alphaIncrement = 1, verbose = FALSE)
 		\code{coordHeaders} is ignored.
 	}
 	\item{clipToCoast}{
-		logical: if \code{TRUE}, then the resulting polygon is clipped to the 
-		coastline. See Details.
+		Either "no" (no clipping), "terrestrial" (only terrestrial part of range is kept)
+		or "aquatic" (only non-terrestrial part is clipped). See Details.
 	}
 	\item{proj}{
 		the projection information for x. The default is currently the only 
@@ -59,8 +59,8 @@ alphaIncrement = 1, verbose = FALSE)
 
 	If the conditions cannot be satisfied, then a minimum convex hull is returned. 
 
-	If \code{clipToCoast = TRUE}, the resulting polygon is clipped to the coastline, 
-	using the \code{\link{gshhs}} dataset provided with this package. 
+	If \code{clipToCoast} is set to "terrestrial" or "aquatic", the resulting polygon 
+	is clipped to the coastline, using the \code{\link{gshhs}} dataset provided with this package. 
 }
 
 \value{
@@ -87,7 +87,7 @@ x <- crotalus[which(crotalus$genSp == 'Crotalus_atrox'),]
 x <- x[sample(1:nrow(x), 50),]
 
 range <- getDynamicAlphaHull(x, coordHeaders=c('decimallongitude','decimallatitude'), 
-	clipToCoast = FALSE)
+	clipToCoast = 'no')
 
 plot(range[[1]], col=transparentColor('dark green', 0.5), border = NA)
 points(x[,c('decimallongitude','decimallatitude')], cex = 0.5, pch = 3)

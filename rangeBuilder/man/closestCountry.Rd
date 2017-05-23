@@ -7,7 +7,7 @@ Return country from point
 Determines which country a given point falls in.
 }
 \usage{
-closestCountry(pt, proj = "+proj=longlat +datum=WGS84", nthreads = 1)
+closestCountry(pt, proj = "+proj=longlat +datum=WGS84")
 }
 \arguments{
 	\item{pt}{
@@ -17,10 +17,6 @@ closestCountry(pt, proj = "+proj=longlat +datum=WGS84", nthreads = 1)
 	\item{proj}{
 		the proj4string of the coordinate. If \code{pt} is a SpatialPoints
 		object, proj is ignored. 
-	}
-	\item{nthreads}{
-		number of threads to use for parallelization of the function. 
-		The R package \code{parallel} must be loaded for \code{nthreads > 1}.
 	}
 }
 

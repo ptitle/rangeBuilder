@@ -1,11 +1,13 @@
 # Function to create alpha hull that encompasses x % of occurrences
 
 
-getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000, initialAlpha = 3, coordHeaders = c('Longitude', 'Latitude'), clipToCoast = TRUE, proj = "+proj=longlat +datum=WGS84", alphaIncrement = 1, verbose = FALSE) {
+getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000, initialAlpha = 3, coordHeaders = c('Longitude', 'Latitude'), clipToCoast = 'terrestrial', proj = "+proj=longlat +datum=WGS84", alphaIncrement = 1, verbose = FALSE) {
 
 	if (proj != "+proj=longlat +datum=WGS84") {
 		stop("Currently, proj can only be '+proj=longlat +datum=WGS84'.")
 	}
+
+	clipToCoast <- match.arg(clipToCoast, c('no', 'terrestrial', 'aquatic'))
 
 	if (ncol(x) == 2) {
 		coordHeaders <- c(1,2)
@@ -14,7 +16,11 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 	#reduce to unique coordinates
 	x <- x[!duplicated(x[,coordHeaders]), coordHeaders]
 	x <- x[complete.cases(x),]
-  
+	
+	if (nrow(x) < 3) {
+		stop('This function requires a minimum of 3 unique coordinates (after removal of duplicates).')
+	}
+	
 	#Alpha hulls cannot be generated if first 3 points are linear. 
 	while ((x[1,coordHeaders[1]] == x[2,coordHeaders[1]] & x[2, coordHeaders[1]] == x[3, coordHeaders[1]]) | (x[1,2] == x[2, coordHeaders[2]] & x[2, coordHeaders[2]] == x[3, coordHeaders[2]])) {
 		x <- x[sample(1:nrow(x),size = nrow(x)),]
@@ -100,11 +106,15 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 		
 	}
   
-	if (clipToCoast) {
+	if (clipToCoast != 'no') {
 		# load built-in gshhs dataset
 		data(gshhs, envir = environment())
 		gshhs <- sp::spTransform(gshhs, CRS(proj4string(hull)))
-		hull <- rgeos::gIntersection(hull, gshhs)
+		if (clipToCoast == 'terrestrial') {
+			hull <- rgeos::gIntersection(hull, gshhs)
+		} else {
+			hull <- rgeos::gDifference(hull, gshhs)
+		}
 	}
   
 	return(list(hull, alpha = paste('alpha', alphaVal, sep = '')))
