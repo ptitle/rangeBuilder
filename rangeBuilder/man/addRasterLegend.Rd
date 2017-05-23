@@ -111,7 +111,7 @@ addRasterLegend(r, direction, side, location = 'right', nTicks = 2,
 		the tick mark locations in plotting units
 	}
 	\item{labels}{
-		the rate values associated with those tick locations. 
+		the values associated with those tick locations. 
 	}
 
 }

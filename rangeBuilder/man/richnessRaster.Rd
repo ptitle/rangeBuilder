@@ -160,6 +160,7 @@ richnessRaster(ranges, resolution = 1, resUnits = 'degrees',
 
 # # generate range polygons
 # ranges <- vector('list', length=length(crotalus))
+# names(ranges) <- names(crotalus)
 # for (i in 1:length(crotalus)) {
 	# cat(i, '\n')
 	# ranges[[i]] <- getDynamicAlphaHull(crotalus[[i]], 

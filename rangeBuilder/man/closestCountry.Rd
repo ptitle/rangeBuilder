@@ -7,14 +7,20 @@ Return country from point
 Determines which country a given point falls in.
 }
 \usage{
-closestCountry(pt, proj = "+proj=longlat +datum=WGS84")
+closestCountry(pt, proj = "+proj=longlat +datum=WGS84", nthreads = 1)
 }
 \arguments{
 	\item{pt}{
-		longitude and latitude, as a numeric vector
+		longitude and latitude, as a numeric vector, 2-column table,
+		or SpatialPoints object.
 	}
 	\item{proj}{
-		the proj4string of the coordinate. 
+		the proj4string of the coordinate. If \code{pt} is a SpatialPoints
+		object, proj is ignored. 
+	}
+	\item{nthreads}{
+		number of threads to use for parallelization of the function. 
+		The R package \code{parallel} must be loaded for \code{nthreads > 1}.
 	}
 }
 
@@ -31,7 +37,8 @@ closestCountry(pt, proj = "+proj=longlat +datum=WGS84")
 }
 
 \value{
-	a country name, or \code{NA}
+	If one point is provided, a character vector is returned. 
+	If multiple points are provided, a list of character vectors is returned. 
 }
 \author{
 	Pascal Title

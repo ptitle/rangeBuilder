@@ -2,12 +2,6 @@
 
 standardizeCountry <- function(country, fuzzyDist = 1, nthreads = 1) {
 	
-	if (nthreads > 1) {
-		if (!"package:parallel" %in% search()) {
-			stop("Please load package 'parallel' for using the multi-thread option\n");
-		}
-	}
-
 	if (any(is.na(country))) {
 		country[which(is.na(country))] <- ''
 	}
@@ -20,6 +14,9 @@ standardizeCountry <- function(country, fuzzyDist = 1, nthreads = 1) {
 	country <- gsub('\\/', '', country)
 	country <- gsub('\\s+', ' ', country)
 	country <- trim(country)
+	
+	# prepare results vector
+	res <- character(length(country))
 	
 	# function to look at each entry in countryList and look for match
 	matchCountry <- function(val, countryList, fuzzyDist = fuzzyDist) {
@@ -75,17 +72,24 @@ standardizeCountry <- function(country, fuzzyDist = 1, nthreads = 1) {
 		}
 	}
 	
+	uniqueCountry <- unique(country)
+	
 	if (nthreads > 1) {
 		cl <- parallel::makePSOCKcluster(nthreads)
-		parallel::clusterExport(cl = cl, varlist = c('country', 'countryList'), envir = environment())
-		res <- parallel::parSapply(cl, country, function(x) {
+		parallel::clusterExport(cl = cl, varlist = c('uniqueCountry', 'countryList'), envir = environment())
+		uniqueRes <- pbapply::pbsapply(uniqueCountry, function(x) {
 			return(matchCountry(x, countryList, fuzzyDist = fuzzyDist))
-		}, simplify = TRUE, USE.NAMES = FALSE)
+		}, simplify = TRUE, USE.NAMES = FALSE, cl = cl)
 		parallel::stopCluster(cl)
 	} else {	
-		res <- sapply(country, function(x) {
+		uniqueRes <- pbapply::pbsapply(uniqueCountry, function(x) {
 			return(matchCountry(x, countryList, fuzzyDist = fuzzyDist))
 		}, simplify = TRUE, USE.NAMES = FALSE)	
+	}
+	
+	# fill in results vector
+	for (i in 1:length(uniqueCountry)) {
+		res[which(country == uniqueCountry[i])] <- uniqueRes[i]
 	}
 	
 	return(res)

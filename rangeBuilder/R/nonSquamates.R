@@ -5,12 +5,6 @@
 
 synonymMatch_other <- function(x, db, fuzzy = TRUE, fuzzyDist = 2, advancedSearch = TRUE, searchSynonyms = TRUE, returnMultiple = FALSE, printReport = TRUE, nthreads = 1) {
 
-	if (nthreads > 1) {
-		if (!"package:parallel" %in% search()) {
-			stop("Please load package 'parallel' for using the multi-thread option\n");
-		}
-	}
-
 	if (!is.vector(x)) {
 		stop('taxon must be a vector of taxon names.')
 	}
@@ -64,10 +58,10 @@ synonymMatch_other <- function(x, db, fuzzy = TRUE, fuzzyDist = 2, advancedSearc
 		if (nthreads > 1) {
 			cl <- parallel::makePSOCKcluster(nthreads)
 			parallel::clusterExport(cl = cl, varlist = c('firstPass', 'uniqueSp', 'synonymDB', 'fuzzy', 'fuzzyDist', 'returnMultiple'), envir = environment())
-		uniqueRes <- parallel::parLapply(cl, uniqueSp, function(x) firstPass(x, synList = synonymDB, synonyms = TRUE, fuzzy = fuzzy, fuzzyDist = fuzzyDist, returnMultiple = returnMultiple))
+		uniqueRes <- pbapply::pblapply(uniqueSp, function(x) firstPass(x, synList = synonymDB, synonyms = TRUE, fuzzy = fuzzy, fuzzyDist = fuzzyDist, returnMultiple = returnMultiple), cl = cl)
 			parallel::stopCluster(cl)
 		} else {
-			uniqueRes <- lapply(uniqueSp, function(x) firstPass(x, synList = synonymDB, synonyms = TRUE, fuzzy = fuzzy, fuzzyDist = fuzzyDist, returnMultiple = returnMultiple))
+			uniqueRes <- pbapply::pblapply(uniqueSp, function(x) firstPass(x, synList = synonymDB, synonyms = TRUE, fuzzy = fuzzy, fuzzyDist = fuzzyDist, returnMultiple = returnMultiple))
 		}
 		
 	}
@@ -101,11 +95,11 @@ synonymMatch_other <- function(x, db, fuzzy = TRUE, fuzzyDist = 2, advancedSearc
 			
 			cl <- parallel::makePSOCKcluster(nthreads)
 			parallel::clusterExport(cl = cl, varlist = c('firstPass', 'advancedSp', 'synonymDB', 'fuzzy', 'fuzzyDist', 'returnMultiple'), envir = environment())
-			advancedRes <- parallel::parLapply(cl, advancedSp, function(x) firstPass(x, synList = synonymDB, synonyms = TRUE, fuzzy = fuzzy, fuzzyDist = fuzzyDist, returnMultiple = returnMultiple))
+			advancedRes <- pbapply::pblapply(advancedSp, function(x) firstPass(x, synList = synonymDB, synonyms = TRUE, fuzzy = fuzzy, fuzzyDist = fuzzyDist, returnMultiple = returnMultiple), cl = cl)
 			parallel::stopCluster(cl)
 			
 		} else {
-			advancedRes <- lapply(advancedSp, function(x) firstPass(x, synList = synonymDB, synonyms = TRUE, fuzzy = fuzzy, fuzzyDist = fuzzyDist, returnMultiple = returnMultiple))
+			advancedRes <- pbapply::pblapply(advancedSp, function(x) firstPass(x, synList = synonymDB, synonyms = TRUE, fuzzy = fuzzy, fuzzyDist = fuzzyDist, returnMultiple = returnMultiple))
 		}
 		
 		#adjust status

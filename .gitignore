@@ -1,6 +1,7 @@
 
 *.DS_Store
 supportFunctions/*
-rangeBuilder.Rcheck/*
+*/rangeBuilder.Rcheck/*
 *.tar.gz
 *.Rapp.history
+*.Rhistory

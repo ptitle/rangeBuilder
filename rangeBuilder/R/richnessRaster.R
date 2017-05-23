@@ -13,12 +13,6 @@ richnessRaster <- function(ranges, resolution = 1, resUnits = 'degrees', extent 
 	
 	resUnits <- match.arg(resUnits, c('degrees', 'meters'))
 	
-	if (nthreads > 1) {
-		if (!"package:parallel" %in% search()) {
-			stop("Please load package 'parallel' for using the multi-thread option\n");
-		}
-	}
-
 	if (class(ranges) == 'list') {
 		if (class(ranges[[1]]) != 'SpatialPolygons' & class(ranges[[1]]) != 'SpatialPolygonsDataFrame') {
 			stop('Input must be a list of SpatialPolygons or a RasterStack.')

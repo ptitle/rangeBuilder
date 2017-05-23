@@ -3,13 +3,7 @@
 # input expected as numeric vector of long, lat in decimal degrees
 
 coordError <- function(coords, nthreads = 1) {
-	
-	if (nthreads > 1) {
-		if (!"package:parallel" %in% search()) {
-			stop("Please load package 'parallel' for using the multi-thread option\n");
-		}
-	}
-	
+		
 	calcError <- function(xy) {
 		# determine number of decimal places
 		if (any(is.na(xy))) {
@@ -66,7 +60,9 @@ coordError <- function(coords, nthreads = 1) {
 			return(rgeos::gDistance(pts[1], pts[2]))
 		}
 	}
-
+	
+	scipenVal <- getOption('scipen')
+	options('scipen' = 999)
 	
 	# vector of coordinates
 	if (is.vector(coords)) {
@@ -117,13 +113,15 @@ coordError <- function(coords, nthreads = 1) {
 			cl <- parallel::makePSOCKcluster(nthreads)
 			parallel::clusterExport(cl = cl, varlist = c('coords', 'calcError', 'SpatialPoints', 'CRS', 'spTransform'), envir = environment())
 			parallel::clusterExport(cl = cl, varlist = 'gDistance', envir = environment(rgeos::gDistance))
-			res <- parallel::parApply(cl, coords, 1, calcError)
+			res <- pbapply::pbapply(coords, 1, calcError, cl = cl)
 			parallel::stopCluster(cl)
 		} else {
-			res <- apply(coords, 1, calcError)
+			res <- pbapply::pbapply(coords, 1, calcError)
 		}
 		names(res) <- NULL
 	}
+	
+	options('scipen' = scipenVal)
 	
 	return(res)
 }

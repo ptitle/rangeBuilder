@@ -4,6 +4,7 @@
 #Function to return all synonyms of an accepted species name
 getSynonymsFromAccepted <- function(sp, db) {
 	sp <- gsub(' ', '_', sp)
+	db <- match.arg(db, c('squamates', 'birds', 'mammals', 'amphibians'))
 	
 	if (db == 'squamates') {
 		if (!sp %in% names(RepDBlist)) {
@@ -35,6 +36,7 @@ getSynonymsFromAccepted <- function(sp, db) {
 #Function to return all accepted names that have a given synonym
 getAcceptedFromSynonym <- function(sp, db) {
 	sp <- gsub(' ', '_', sp)
+	db <- match.arg(db, c('squamates', 'birds', 'mammals', 'amphibians'))
 	
 	if (db == 'squamates') {
 		db <- RepDBlist
@@ -58,6 +60,8 @@ getAcceptedFromSynonym <- function(sp, db) {
 
 # Return list of all accepted species names
 getAcceptedNames <- function(db) {
+	
+	db <- match.arg(db, c('squamates', 'birds', 'mammals', 'amphibians'))
 	
 	if (db == 'squamates') {
 		return(names(RepDBlist))
