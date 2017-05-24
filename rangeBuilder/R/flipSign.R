@@ -51,6 +51,10 @@ flipSign <- function(coordVec, country, returnMultiple = FALSE, filterByLand = T
 	if (filterByLand) {
 		allcoords <- allcoords[filterByLand(allcoords, proj = proj),]
 	}
+
+	if (nrow(allcoords) == 0) {
+		return(list(matched = FALSE, newcoords = NA))
+	}
 	
 	if (class(allcoords) == 'numeric') {
 		allcoords <- matrix(allcoords, nrow = 1)
