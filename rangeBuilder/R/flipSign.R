@@ -1,7 +1,7 @@
 # function to change the sign of long and lat and check against country
 # currently implemented for longlat WGS84 (as this is the coord system of the world points)
 
-flipSign <- function(coordVec, country, returnMultiple = FALSE, proj = "+proj=longlat +datum=WGS84") {
+flipSign <- function(coordVec, country, returnMultiple = FALSE, filterByLand = TRUE, proj = "+proj=longlat +datum=WGS84") {
 #coordVec is a vector: long, lat
 # country is the name of the country associated with those coordinates
 # returnMultiple: if multiple sign flips lead to the correct country, return all options. If FALSE, returns the coords with the fewest needed sign flips.
@@ -46,13 +46,21 @@ flipSign <- function(coordVec, country, returnMultiple = FALSE, proj = "+proj=lo
 
 	drop <- union(which(allcoords[,'lat'] > bb[2,2]), which(allcoords[,'lat'] < bb[2,1]))
 	if (length(drop) > 0) {allcoords <- allcoords[-drop,]}
-
-	allcountries <- apply(allcoords, 1, function(x) closestCountry(x, proj = proj))
+	
+	# also, remove options that don't fall on land
+	if (filterByLand) {
+		allcoords <- allcoords[filterByLand(allcoords, proj = proj),]
+	}
+	
+	if (class(allcoords) == 'numeric') {
+		allcoords <- matrix(allcoords, nrow = 1)
+	}
+	allcountries <- lapply(1:nrow(allcoords), function(x) closestCountry(allcoords[x,], proj = proj))
 
 	if (country %in% unlist(allcountries)) {
 		match <- lapply(allcountries, function(x) country %in% x)
 		newcoords <- allcoords[which(match == TRUE),]
-		newcoords <- matrix(newcoords, ncol = 2, byrow = TRUE)
+		newcoords <- matrix(newcoords, ncol = 2, byrow = FALSE)
 		colnames(newcoords) <- c('long','lat')
 
 		if (nrow(newcoords) == 2 & returnMultiple == FALSE) {

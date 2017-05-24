@@ -7,7 +7,8 @@ Flip sign of coordinates
 Checks for coordinate sign mistakes by checking all possibilities against country occupancy.
 }
 \usage{
-flipSign(coordVec, country, returnMultiple = FALSE, proj = "+proj=longlat +datum=WGS84")
+flipSign(coordVec, country, returnMultiple = FALSE, filterByLand = TRUE, 
+	proj = "+proj=longlat +datum=WGS84")
 }
 \arguments{
 	\item{coordVec}{
@@ -20,6 +21,10 @@ flipSign(coordVec, country, returnMultiple = FALSE, proj = "+proj=longlat +datum
 		if multiple sign flips lead to the correct country, return all options. 
 		If \code{FALSE}, returns the coords with the fewest needed sign flips.
 	}
+	\item{filterByLand}{
+		if \code{TRUE}, alternative coords will be tested for whether or not they 
+		fall on land.
+	}
 	\item{proj}{
 		the proj4string of the coordinate. 
 	}
@@ -28,7 +33,7 @@ flipSign(coordVec, country, returnMultiple = FALSE, proj = "+proj=longlat +datum
 \details{
 	This function generates all possible coordinates with different signs, and 
 	runs \code{\link{closestCountry}} on each, returning the coordinates that lead 
-	to a country match.
+	to a country match. It ignores coordinate options that do not pass \code{\link{filterByLand}}.
 
 	If a point falls close to the boundary between two countries, it is still considered a match.
 }
@@ -53,10 +58,9 @@ flipSign(c(4.28, 39.98), country = 'Spain')
 #mistake in coordinate sign
 flipSign(c(115.436, 32.657), country = 'United States')
 
-#incorrect sign on the latitude, but not possible to detect correct longitude
-flipSign(c(4.28, -39.98), country = 'Spain')
-
-#incorrect sign on both, but not possible to distinguish for longitude
+#incorrect sign on both long and lat, but not possible to distinguish for longitude
+#except when we consider which alternative coords fall on land.
+flipSign(c(-4.28, -39.98), country = 'Spain', filterByLand = FALSE, returnMultiple = TRUE)
 flipSign(c(-4.28, -39.98), country = 'Spain', returnMultiple = TRUE)
 
 #coordinates are incorrect

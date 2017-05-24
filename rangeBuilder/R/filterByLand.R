@@ -1,15 +1,9 @@
 # Function to filter occurrences by land/ocean
 
-# coords: 2 column matrix, numeric vector length 2, SpatialPoints object
-# returnGood: if TRUE, index of points that pass filter is returned, if FALSE, index of points that fail is returned
-# proj: proj4string of input coords. Ignored if input coords are spatial object
-
-# Returns indices of points that make the filter
-
-filterByLand <- function(coords, returnGood = TRUE, proj = '+proj=longlat +datum=WGS84') {
+filterByLand <- function(coords, proj = '+proj=longlat +datum=WGS84') {
 
 	# if vector, convert to matrix
-	if (is.numeric(coords)) {
+	if (is.null(dim(coords))) {
 		coords <- matrix(coords, nrow = 1, ncol = 2)
 	}
 
@@ -46,10 +40,7 @@ filterByLand <- function(coords, returnGood = TRUE, proj = '+proj=longlat +datum
 
 	#extract worldRaster values
 	e <- extract(worldRaster, coords)
-	
-	if (returnGood) {
-		return(which(!is.na(e)))
-	} else {
-		return(which(is.na(e)))
-	}
+	e <- ifelse(is.na(e), FALSE, TRUE)
+
+	return(e)	
 }

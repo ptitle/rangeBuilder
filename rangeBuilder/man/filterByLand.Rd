@@ -7,14 +7,11 @@ Filter occurrences based on land vs ocean
 Identifies occurrence records that do not occur on land.
 }
 \usage{
-filterByLand(coords, returnGood = TRUE, proj = '+proj=longlat +datum=WGS84')
+filterByLand(coords, proj = '+proj=longlat +datum=WGS84')
 }
 \arguments{
 	\item{coords}{
 		coordinates in the form of a 2 column numeric matrix, data.frame, numeric vector, or SpatialPoints object. If Spatial object, proj4string must be specified. 
-	}
-	\item{returnGood}{
-		logical: if \code{TRUE}, index of points that pass filter is returned, if \code{FALSE}, index of points that fail is returned
 	}
 	\item{proj}{
 		proj4string of input coords. Ignored if input coords are spatial object.
@@ -26,8 +23,7 @@ filterByLand(coords, returnGood = TRUE, proj = '+proj=longlat +datum=WGS84')
 }
 
 \value{
-	a vector of indices corresponding to the records that do or do not pass the filter, 
-	depending on \code{returnGood}. 
+	returns a logical vector where \code{TRUE} means the point falls on land.
 }
 \author{
 	Pascal Title
@@ -37,6 +33,6 @@ filterByLand(coords, returnGood = TRUE, proj = '+proj=longlat +datum=WGS84')
 data(crotalus)
 
 #identify points that fall off land
-filterByLand(crotalus[,c('decimallongitude','decimallatitude')], returnGood = FALSE)
+filterByLand(crotalus[,c('decimallongitude','decimallatitude')])
 }
  
