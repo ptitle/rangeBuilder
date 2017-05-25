@@ -7,6 +7,7 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 		stop("Currently, proj can only be '+proj=longlat +datum=WGS84'.")
 	}
 
+	if (clipToCoast == FALSE) {clipToCoast <- 'no'}
 	clipToCoast <- match.arg(clipToCoast, c('no', 'terrestrial', 'aquatic'))
 
 	if (ncol(x) == 2) {
@@ -50,7 +51,7 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 		}
 	}
 
-	hull <- ah2sp(hull, proj4string = CRS('+proj=longlat +datum=WGS84'))
+	hull <-ah2sp(hull, proj4string = CRS('+proj=longlat +datum=WGS84'))
 
 	if (!is.null(hull)) {
 		slot(hull, "polygons") <- lapply(slot(hull, "polygons"), checkPolygonsGEOS2)
@@ -75,18 +76,22 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 	while (any(length(hull@polygons[[1]]@Polygons) > partCount, length(which(pointWithin) == TRUE)/length(x) < fraction)) {
 	    alpha <- alpha + alphaIncrement
 	    if (verbose) {cat('\talpha:', alpha, '\n')}
-	    hull <- try(alphahull::ahull(data.frame(x), alpha = alpha))
-	    while ('try-error' %in% class(hull)) {
+	    hull <- try(alphahull::ahull(data.frame(x), alpha = alpha), silent = TRUE)
+	    while ('try-error' %in% class(hull) & alpha <= 500) {
 	      alpha <- alpha + alphaIncrement
-	      hull <- try(alphahull::ahull(data.frame(x),alpha = alpha))
+	      hull <- try(alphahull::ahull(data.frame(x),alpha = alpha), silent = TRUE)
 	    }
-		hull <- ah2sp(hull, proj4string = CRS('+proj=longlat +datum=WGS84'))
-		hull <- sp::spTransform(hull, CRS("+init=epsg:3395"))
-		slot(hull, "polygons") <- lapply(slot(hull, "polygons"), checkPolygonsGEOS2)
-		hull <- rgeos::gBuffer(hull, width = buff)
-		hull <- sp::spTransform(hull, CRS(proj))
-		buffered <- TRUE
-		pointWithin <- rgeos::gIntersects(x, hull, byid = TRUE)
+		if (!'try-error' %in% class(hull)) {
+			hull <- ah2sp(hull, proj4string = CRS('+proj=longlat +datum=WGS84'))
+			hull <- sp::spTransform(hull, CRS("+init=epsg:3395"))
+			if (cleangeo::clgeo_IsValid(hull)) {
+				slot(hull, "polygons") <- lapply(slot(hull, "polygons"), checkPolygonsGEOS2)
+				hull <- rgeos::gBuffer(hull, width = buff)
+				hull <- sp::spTransform(hull, CRS(proj))
+				buffered <- TRUE
+				pointWithin <- rgeos::gIntersects(x, hull, byid = TRUE)
+			}
+		}
 		alphaVal = alpha
 		if (alpha > 500) {
 			hull <- rgeos::gConvexHull(x)
