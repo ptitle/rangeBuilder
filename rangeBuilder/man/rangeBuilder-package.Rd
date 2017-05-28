@@ -18,7 +18,6 @@ Date: \tab 2016-10-03\cr
 License: \tab GPL-2 | GPL-3\cr
 }
 
-See the \code{examples} section of \code{\link{richnessRaster}} for an example that uses most functions in this package.
 
 }
 

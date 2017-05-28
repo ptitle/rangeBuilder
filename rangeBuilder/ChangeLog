@@ -25,3 +25,4 @@ Changes in rangeBuilder
   * performance improvements to standardizeCountry
   * modify getDynamicAlphaHull to have the option of clipping to coastline
     but keeping the non-terrestrial portion of the range.
+  * remove richnessRaster function and replace with rasterStackFromPolyList

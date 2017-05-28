@@ -2,6 +2,6 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 shortDistInd <- function(mat1, mat2) {
-    .Call('rangeBuilder_shortDistInd', PACKAGE = 'rangeBuilder', mat1, mat2)
+    .Call(rangeBuilder_shortDistInd, mat1, mat2)
 }
 

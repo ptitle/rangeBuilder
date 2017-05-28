@@ -8,7 +8,7 @@ Maintainer: Pascal Title <ptitle@umich.edu>
 Imports: alphahull, stringi, rgeos (>= 0.1-4), pbapply, cleangeo, methods, Rcpp (>= 0.12.9)
 Depends: sp, raster, rgdal, R (>= 2.10)
 Suggests: parallel
-Description: Provides tools for filtering occurrence records, generating alpha-hull-derived range polygons and mapping species richness. 
+Description: Provides tools for filtering occurrence records, generating alpha-hull-derived range polygons and mapping species distributions. 
 License: ACM
 URL: https://github.com/ptitle/rangeBuilder
 NeedsCompilation: yes
