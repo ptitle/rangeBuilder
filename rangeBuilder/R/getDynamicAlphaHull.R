@@ -51,13 +51,13 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 		}
 	}
 
-	hull <-ah2sp(hull, proj4string = CRS('+proj=longlat +datum=WGS84'))
+	hull <- ah2sp(hull, proj4string = CRS('+proj=longlat +datum=WGS84'))
 
 	if (!is.null(hull)) {
 		slot(hull, "polygons") <- lapply(slot(hull, "polygons"), checkPolygonsGEOS2)
 	}
  
-	while (is.null(hull) | 'try-error' %in% class(hull) | !rgeos::gIsValid(hull, reason = TRUE) %in% c(TRUE, 'Valid Geometry')) {
+	while (is.null(hull) | 'try-error' %in% class(hull) | !cleangeo::clgeo_IsValid(hull)) {
 		alpha <- alpha + alphaIncrement
 		if (verbose) {cat('\talpha:', alpha, '\n')}
 		hull <- try(ah2sp(alphahull::ahull(data.frame(x),alpha=alpha), proj4string=CRS('+proj=longlat +datum=WGS84')))
