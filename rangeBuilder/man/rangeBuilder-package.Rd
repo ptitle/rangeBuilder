@@ -6,15 +6,15 @@
 rangeBuilder
 }
 \description{
-Provides tools for filtering occurrence records, standardizing countries and species names, generating alpha-hull-derived range polygons and mapping species richness. 
+Provides tools for filtering occurrence records, standardizing countries and species names, generating alpha-hull-derived range polygons and mapping species distributions. 
 
 }
 \details{
 \tabular{ll}{
 Package: \tab rangeBuilder\cr
 Type: \tab Package\cr
-Version: \tab 1.3\cr
-Date: \tab 2016-10-03\cr
+Version: \tab 1.4\cr
+Date: \tab 2017-05-31\cr
 License: \tab GPL-2 | GPL-3\cr
 }
 

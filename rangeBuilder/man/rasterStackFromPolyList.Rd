@@ -36,6 +36,7 @@ In the rasterization process, all cells for which the polygon covers the midpoin
 }
 \examples{
 
+\dontrun{
 data(crotalus)
 
 # standardize species names
@@ -78,6 +79,7 @@ plot(richnessRaster, col=ramp(100))
 
 plot(gshhs, add = TRUE, lwd=0.5)
 
+}
 }
 \author{
 Pascal Title

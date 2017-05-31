@@ -18,7 +18,7 @@ Changes in rangeBuilder
   * add downloadDates function that reports dates that various datasets were acquired
   * changed function getExtentOfList to return an object of class extent
   * updated standardizeCountry to handle ISO-2 and ISO-3 country codes
- 2017-05-XX
+ 2017-05-31
   * add pbapply to get progress bars
   * update point reference system for closestCountry
   * Rcpp function for closestCountry
@@ -26,3 +26,6 @@ Changes in rangeBuilder
   * modify getDynamicAlphaHull to have the option of clipping to coastline
     but keeping the non-terrestrial portion of the range.
   * remove richnessRaster function and replace with rasterStackFromPolyList
+  * add onLand check to flipSign function
+  * improvement to worldRaster, leads to greater accuracy with filterByLand.
+  * miscellaneous small modifications.
