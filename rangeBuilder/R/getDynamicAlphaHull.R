@@ -73,7 +73,7 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 	alphaVal <- alpha
 	buffered <- FALSE
 
-	while (any(length(hull@polygons[[1]]@Polygons) > partCount, length(which(pointWithin) == TRUE)/length(x) < fraction)) {
+	while (any(length(hull@polygons[[1]]@Polygons) > partCount, length(which(pointWithin) == TRUE)/length(x) < fraction, !cleangeo::clgeo_IsValid(hull))) {
 	    alpha <- alpha + alphaIncrement
 	    if (verbose) {cat('\talpha:', alpha, '\n')}
 	    hull <- try(alphahull::ahull(data.frame(x), alpha = alpha), silent = TRUE)
@@ -106,9 +106,8 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 
 	if (!buffered) {
 		hull <- sp::spTransform(hull, CRS("+init=epsg:3395"))
-		hull <- rgeos::gBuffer(hull,width = buff)
-		hull <- sp::spTransform(hull, CRS(proj))
-		
+		hull <- rgeos::gBuffer(hull, width = buff)
+		hull <- sp::spTransform(hull, CRS(proj))	
 	}
   
 	if (clipToCoast != 'no') {
