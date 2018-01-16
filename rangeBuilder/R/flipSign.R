@@ -1,5 +1,45 @@
-# function to change the sign of long and lat and check against country
-# currently implemented for longlat WGS84 (as this is the coord system of the world points)
+##' Flip sign of coordinates
+##' 
+##' Checks for coordinate sign mistakes by checking all possibilities against
+##' country occupancy.
+##' 
+##' This function generates all possible coordinates with different signs, and
+##' runs \code{\link{closestCountry}} on each, returning the coordinates that
+##' lead to a country match. It ignores coordinate options that do not pass
+##' \code{\link{filterByLand}}.
+##' 
+##' If a point falls close to the boundary between two countries, it is still
+##' considered a match.
+##' 
+##' @param coordVec numeric vector of length 2: longitude, latitude
+##' @param country the country that is associated with the record
+##' @param returnMultiple if multiple sign flips lead to the correct country,
+##' return all options.  If \code{FALSE}, returns the coords with the fewest
+##' needed sign flips.
+##' @param filterByLand if \code{TRUE}, alternative coords will be tested for
+##' whether or not they fall on land.
+##' @param proj the proj4string of the coordinate.
+##' @return list with 2 elements \item{matched}{ logical: Was the country
+##' matched } \item{newcoords}{ matrix of coordinates that were successful.  }
+##' @author Pascal Title
+##' @examples
+##' 
+##' #correct coordinates
+##' flipSign(c(4.28, 39.98), country = 'Spain')
+##' 
+##' #mistake in coordinate sign
+##' flipSign(c(115.436, 32.657), country = 'United States')
+##' 
+##' #incorrect sign on both long and lat, but not possible to distinguish for longitude
+##' #except when we consider which alternative coords fall on land.
+##' flipSign(c(-4.28, -39.98), country = 'Spain', filterByLand = FALSE, returnMultiple = TRUE)
+##' flipSign(c(-4.28, -39.98), country = 'Spain', returnMultiple = TRUE)
+##' 
+##' #coordinates are incorrect
+##' flipSign(c(4.28, 59.98), country = 'Spain')
+##' 
+##' @export
+
 
 flipSign <- function(coordVec, country, returnMultiple = FALSE, filterByLand = TRUE, proj = "+proj=longlat +datum=WGS84") {
 #coordVec is a vector: long, lat

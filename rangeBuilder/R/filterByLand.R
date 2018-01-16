@@ -1,4 +1,28 @@
-# Function to filter occurrences by land/ocean
+##' Filter occurrences based on land vs ocean
+##' 
+##' Identifies occurrence records that do not occur on land.
+##' 
+##' This function uses a rasterized version of the GSHHG (global
+##' self-consistent, hierarchical, high-resolution geography database,
+##' \url{https://www.soest.hawaii.edu/pwessel/gshhg/}), that has been buffered
+##' by 2 km.
+##' 
+##' @param coords coordinates in the form of a 2 column numeric matrix,
+##' data.frame, numeric vector, or SpatialPoints object. If Spatial object,
+##' proj4string must be specified.
+##' @param proj proj4string of input coords. Ignored if input coords are
+##' spatial object.
+##' @return returns a logical vector where \code{TRUE} means the point falls on
+##' land.
+##' @author Pascal Title
+##' @examples
+##' 
+##' data(crotalus)
+##' 
+##' #identify points that fall off land
+##' filterByLand(crotalus[,c('decimallongitude','decimallatitude')])
+##' 
+##' @export
 
 filterByLand <- function(coords, proj = '+proj=longlat +datum=WGS84') {
 
@@ -39,7 +63,7 @@ filterByLand <- function(coords, proj = '+proj=longlat +datum=WGS84') {
 	}
 
 	#extract worldRaster values
-	e <- extract(worldRaster, coords)
+	e <- raster::extract(worldRaster, coords)
 	e <- ifelse(is.na(e), FALSE, TRUE)
 
 	return(e)	

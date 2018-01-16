@@ -1,7 +1,41 @@
-# function to take coordinates, and determine the maximum amount of error in meters from the lack of coordinate precision
+##' @title Coordinate error
 
-# input expected as numeric vector of long, lat in decimal degrees
+##' @description Calculates the potential error in coordinates due to lack of coordinate precision. 
 
+##' @param coords longitude and latitude in decimal degrees, either as a long/lat vector, or as 
+##' 	a 2-column table. Can be either as numeric or character format
+
+##' @param nthreads
+##' 	number of threads to use for parallelization of the function. 
+##' 	The R package \code{parallel} must be loaded for \code{nthreads > 1}.
+##'
+##' @details
+##' 	This function assumes that the true precision of the coordinates is equivalent to the 
+##' 	greatest number of decimals in either the longitude or latitude that are not trailing 
+##' 	zeroes. In other words: \cr
+##' 	\code{(-130.45670, 45.53000)} is interpreted as \code{(-130.4567, 45.5300)} \cr
+##' 	\code{(-130.20000, 45.50000)} is interpreted as \code{(-130.2, 45.5)} \cr
+##' 
+##' 	If we use \code{(-130.45670, 45.53000)} as an example, these coordinates are interpreted 
+##' 	as \code{(-130.4567, 45.5300)} and the greatest possible error is inferred as two 
+##' endpoints:
+##' 	\code{(-130.45670, 45.53000)} and \code{(-130.45679, 45.53009)} \cr
+##' 
+##' The distance between these two is then calculated and returned. 
+##' 
+##' @return Returns a vector of coordinate error in meters.
+
+##' @author	Pascal Title
+
+##' @examples
+##' data(crotalus)
+##'
+##' xy <- crotalus[1:100, c('decimallongitude','decimallatitude')]
+##'
+##' coordError(xy)
+##' 
+##' @export
+ 
 coordError <- function(coords, nthreads = 1) {
 		
 	calcError <- function(xy) {
@@ -107,7 +141,10 @@ coordError <- function(coords, nthreads = 1) {
 		coords[which(abs(as.numeric(coords[,1])) > 180), 1] <- NA
 		coords[which(abs(as.numeric(coords[,2])) > 90), 2] <- NA
 		
-		
+		op <- pbapply::pboptions(type = "timer")
+		if (nrow(coords) < 10) {
+			pbapply::pboptions(type = "none")
+		}	
 		
 		if (nthreads > 1) {
 			cl <- parallel::makePSOCKcluster(nthreads)
@@ -122,6 +159,7 @@ coordError <- function(coords, nthreads = 1) {
 	}
 	
 	options('scipen' = scipenVal)
+	pbapply::pboptions(op)
 	
 	return(res)
 }

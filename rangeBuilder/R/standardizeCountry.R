@@ -1,6 +1,37 @@
-# standardize country name to the set used in the rangeBuilder package
+##' Standardize country name
+##' 
+##' Standardizes country names to the list of countries used internally by this
+##' package.
+##' 
+##' This package interacts with data from the Global Invasive Species Database
+##' (GISD), the Reptile Database, as well as global maps that were used to
+##' generate the internal dataset used by \code{\link{closestCountry}}. Efforts
+##' have been made to make country names consistent across these separate
+##' datasets. This function can be used to convert the user's \code{Country}
+##' field to the same standardized set.
+##' 
+##' Fuzzy matching uses the function \code{\link{adist}}.
+##' 
+##' Parallelization with \code{nthreads} becomes more time-efficient only if
+##' the input vector is of multiple thousands of country names.
+##' 
+##' @param country character vector of country names or ISO codes
+##' @param fuzzyDist for fuzzy searching, the maximum string distance allowed
+##' for a match; if 0, fuzzy searching is disabled.
+##' @param nthreads number of threads to use for parallelization of the
+##' function.  The R package \code{parallel} must be loaded for \code{nthreads
+##' > 1}.
+##' @param progressBar if \code{FALSE}, progress bar will be suppressed.
+##' @return Character vector of the standardized country names. If no match
+##' found, \code{""} is returned.
+##' @author Pascal Title
+##' @examples
+##' 
+##' standardizeCountry(c("Russian Federation", "USA", "Plurinational State of Bolivia", "Brezil"))
+##' 
+##' @export
 
-standardizeCountry <- function(country, fuzzyDist = 1, nthreads = 1) {
+standardizeCountry <- function(country, fuzzyDist = 1, nthreads = 1, progressBar = TRUE) {
 	
 	if (any(is.na(country))) {
 		country[which(is.na(country))] <- ''
@@ -10,6 +41,8 @@ standardizeCountry <- function(country, fuzzyDist = 1, nthreads = 1) {
 	country <- gsub('\\.', '', country)
 	country <- stringi::stri_trans_general(country, "Latin-ASCII")
 	country <- gsub('(^|\\s)ST\\.?\\s', 'SAINT ', country)
+	country <- gsub('\\s+\\&\\s+', ' AND ', country)
+	country <- gsub('ISLAND\\/S', 'ISLANDS', country)
 	country <- gsub('\\?|\\[|\\]', '', country)
 	country <- gsub('\\/', '', country)
 	country <- gsub('\\s+', ' ', country)
@@ -74,7 +107,12 @@ standardizeCountry <- function(country, fuzzyDist = 1, nthreads = 1) {
 	
 	uniqueCountry <- unique(country)
 	
-	if (nthreads > 1) {
+	op <- pbapply::pboptions(type = "timer")
+	if (length(uniqueCountry) < 10 | !progressBar) {
+		pbapply::pboptions(type = "none")
+	}	
+	
+	if (nthreads > 1 & length(uniqueCountry) > 10) {
 		cl <- parallel::makePSOCKcluster(nthreads)
 		parallel::clusterExport(cl = cl, varlist = c('uniqueCountry', 'countryList'), envir = environment())
 		uniqueRes <- pbapply::pbsapply(uniqueCountry, function(x) {
@@ -91,6 +129,8 @@ standardizeCountry <- function(country, fuzzyDist = 1, nthreads = 1) {
 	for (i in 1:length(uniqueCountry)) {
 		res[which(country == uniqueCountry[i])] <- uniqueRes[i]
 	}
+	
+	pbapply::pboptions(op)
 	
 	return(res)
 }

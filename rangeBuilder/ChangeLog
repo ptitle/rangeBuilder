@@ -29,3 +29,5 @@ Changes in rangeBuilder
   * add onLand check to flipSign function
   * improvement to worldRaster, leads to greater accuracy with filterByLand.
   * miscellaneous small modifications.
+  2018-01-**
+  * 
