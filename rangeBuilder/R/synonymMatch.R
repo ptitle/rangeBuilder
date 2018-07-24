@@ -19,17 +19,23 @@
 ##' function.
 
 ##' @details
-##' 	The order of the procedure applied here is as follows:
+##' 	The order of the procedure applied here is as follows:\cr
 ##' 	\cr First Pass: \cr
-##' 	\tStrict matching against accepted names, \cr
-##' 	\tfuzzy matching against accepted names, \cr
-##' 	\tstrict matching against synonyms,\cr 
-##' 	\tfuzzy matching against synonyms,\cr\cr
+##'		\itemize{
+##' 	\item Strict matching against accepted names, \cr
+##' 	\item fuzzy matching against accepted names, \cr
+##' 	\item strict matching against synonyms,\cr 
+##' 	\item fuzzy matching against synonyms,\cr\cr
+##'		}
 ##' 	Second Pass:
-##' 	\tSame as first pass, but ignoring subspecies\cr
-##' 	\tAdvanced Search: \cr
-##' 	\tSame as first pass, but with consideration of alternate latin suffixes and 
+##' 	\itemize{
+##'		\item Same as first pass, but ignoring subspecies\cr
+##'		}
+##' 	Advanced Search: \cr
+##' 	\itemize{
+##'		\item Same as first pass, but with consideration of alternate latin suffixes and 
 ##' 	all genus/species combinations.
+##'		}
 ##' 	\cr
 ##'	
 ##' 	The squamate database is a local copy of the Reptile Database

@@ -43,17 +43,23 @@ all in the database.
 Performs strict and fuzzy matching to return the accepted species name
 }
 \details{
-The order of the procedure applied here is as follows:
+The order of the procedure applied here is as follows:\cr
 	\cr First Pass: \cr
-	Strict matching against accepted names, \cr
-	fuzzy matching against accepted names, \cr
-	strict matching against synonyms,\cr 
-	fuzzy matching against synonyms,\cr\cr
+	\itemize{
+	\item Strict matching against accepted names, \cr
+	\item fuzzy matching against accepted names, \cr
+	\item strict matching against synonyms,\cr 
+	\item fuzzy matching against synonyms,\cr\cr
+	}
 	Second Pass:
-	Same as first pass, but ignoring subspecies
+	\itemize{
+	\item Same as first pass, but ignoring subspecies\cr
+	}
 	Advanced Search: \cr
-	Same as first pass, but with consideration of alternate latin suffixes and 
+	\itemize{
+	\item Same as first pass, but with consideration of alternate latin suffixes and 
 	all genus/species combinations.
+	}
 	\cr
 
 	The squamate database is a local copy of the Reptile Database
