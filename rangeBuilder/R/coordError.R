@@ -101,13 +101,13 @@ coordError <- function(coords, nthreads = 1) {
 	# vector of coordinates
 	if (is.vector(coords)) {
 		if (!all(is.na(coords))) {
-			if (class(coords) != 'numeric' & class(coords) != 'character') {
+			if (!any(inherits(coords, c('numeric', 'character')))) {
 				stop('coords must be of class numeric or character.')
 			}
 			if (length(coords) != 2) {
 				stop('coords must be of length 2: long, lat.')
 			}
-			if (class(coords) == 'numeric') {
+			if (inherits(coords, 'numeric')) {
 				coords <- as.character(coords)
 			}
 			# if either coordinate is invalid, replace with NA to trip that check later

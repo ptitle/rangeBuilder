@@ -79,11 +79,11 @@
 
 addRasterLegend <- function(r, direction, side, location = 'right', nTicks = 2, adj = NULL, shortFrac = 0.02, longFrac = 0.3, axisOffset = 0, border = TRUE, ramp = "terrain", isInteger = 'auto', ncolors = 64, breaks = NULL, minmax = NULL, locs = NULL, cex.axis = 0.8, labelDist = 0.7, digits = 2, bigmark = '', ...) {
 		
-	if (class(r) == 'speciesRaster') {
+	if (inherits(r, 'speciesRaster')) {
 		r <- r[[1]]
 	}
 	
-	if (class(r) != 'RasterLayer') {
+	if (!inherits(r, 'RasterLayer')) {
 		stop("r must be a speciesRaster object or RasterLayer.");
 	}
 		
@@ -108,7 +108,7 @@ addRasterLegend <- function(r, direction, side, location = 'right', nTicks = 2, 
 	if(!methods::hasArg('ramp')) {
 		pal <- rev(grDevices::terrain.colors(ncolors));
 	} else {
-		if (class(ramp) == 'function') {
+		if (inherits(ramp, 'function')) {
 			pal <- ramp(ncolors)
 		} else {
 			pal <- grDevices::colorRampPalette(ramp)(ncolors)

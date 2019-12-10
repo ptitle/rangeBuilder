@@ -1,6 +1,6 @@
 # Function written by Andrew Bevan, found on R-sig-Geo, and modified by Pascal Title
 ah2sp <- function(x, increment=360, rnd=10, proj4string=CRS(as.character(NA)),tol=1e-4) {
-  if (class(x) != "ahull"){
+  if (!inherits(x, "ahull")) {
     stop("x needs to be an ahull class object")
   }
   # Extract the edges from the ahull object as a dataframe

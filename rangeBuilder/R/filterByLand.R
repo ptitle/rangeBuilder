@@ -31,11 +31,11 @@ filterByLand <- function(coords, proj = '+proj=longlat +datum=WGS84') {
 		coords <- matrix(coords, nrow = 1, ncol = 2)
 	}
 
-	if (class(coords) == 'data.frame') {
+	if (inherits(coords, 'data.frame')) {
 		coords <- as.matrix(coords)
 	}
 
-	if (class(coords) %in% c('SpatialPoints', 'SpatialPointsDataFrame')) {
+	if (any(inherits(coords, c('SpatialPoints', 'SpatialPointsDataFrame')))) {
 		
 		if (is.na(proj4string(coords))) {
 			stop('proj4string must be specified for spatial input.')
@@ -50,7 +50,7 @@ filterByLand <- function(coords, proj = '+proj=longlat +datum=WGS84') {
 		coords <- as.matrix(as.data.frame(coords))
 	}
 
-	if (class(coords) == 'matrix' & proj4string(worldRaster) != proj) {
+	if (inherits(coords, 'matrix') & proj4string(worldRaster) != proj) {
 
 		#transform
 		coords <- SpatialPoints(coords, CRS(proj))
@@ -58,13 +58,13 @@ filterByLand <- function(coords, proj = '+proj=longlat +datum=WGS84') {
 		coords <- as.matrix(as.data.frame(coords))
 	}
 
-	if (class(coords) != 'matrix' | mode(coords) != 'numeric') {
+	if (!inherits(coords, 'matrix') | mode(coords) != 'numeric') {
 		stop('coords must be a numeric matrix.')
 	}
 
 	#extract worldRaster values
 	e <- raster::extract(worldRaster, coords)
-	e <- ifelse(is.na(e), FALSE, TRUE)
+	e <- as.logical(e)
 
 	return(e)	
 }

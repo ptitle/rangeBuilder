@@ -4,9 +4,17 @@
 \alias{synonymMatch}
 \title{Match synonyms to accepted names}
 \usage{
-synonymMatch(x, db, yearCutoff = NULL, searchSynonyms = TRUE,
-  fuzzyDist = 2, advancedSearch = FALSE, returnMultiple = FALSE,
-  progressBar = TRUE, nthreads = 1)
+synonymMatch(
+  x,
+  db,
+  yearCutoff = NULL,
+  searchSynonyms = TRUE,
+  fuzzyDist = 2,
+  advancedSearch = FALSE,
+  returnMultiple = FALSE,
+  progressBar = TRUE,
+  nthreads = 1
+)
 }
 \arguments{
 \item{x}{a character vector of Genus_species_subspecies (can be multiple)}
@@ -15,7 +23,7 @@ synonymMatch(x, db, yearCutoff = NULL, searchSynonyms = TRUE,
 
 \item{yearCutoff}{year for oldest considered synonyms, please treat as experimental.}
 
-\item{searchSynonyms}{if FALSE, strict and fuzzy matching is applied only
+\item{searchSynonyms}{if \code{FALSE}, strict and fuzzy matching is applied only
 to the list of accepted names}
 
 \item{fuzzyDist}{for fuzzy searching, the maximum string distance allowed
@@ -35,21 +43,21 @@ function.}
 }
 \value{
 a vector of matches, \code{NA} if the species name could not be
-unambiguously matched to a single accepted name. If \code{returnMultiple =
-TRUE}, then \code{NA} is only returned when the taxon name is not matched at
-all in the database.
+	unambiguously matched to a single accepted name. If \code{returnMultiple =
+	TRUE}, then \code{NA} is only returned when the taxon name is not matched at
+	all in the database.
 }
 \description{
 Performs strict and fuzzy matching to return the accepted species name
 }
 \details{
-The order of the procedure applied here is as follows:\cr
-	\cr First Pass: \cr
+The order of the procedure applied here is as follows: \cr
+	First Pass: \cr
 	\itemize{
 	\item Strict matching against accepted names, \cr
 	\item fuzzy matching against accepted names, \cr
 	\item strict matching against synonyms,\cr 
-	\item fuzzy matching against synonyms,\cr\cr
+	\item fuzzy matching against synonyms,\cr
 	}
 	Second Pass:
 	\itemize{
@@ -77,40 +85,38 @@ The order of the procedure applied here is as follows:\cr
 	\code{taxize} R package.
 
 	The amphibian database is a local copy of the AmphibiaWeb taxonomy
-	(\url{amphibiaweb.org/taxonomy/index.html}), which will be updated
+	(\url{https://amphibiaweb.org/taxonomy/index.html}), which will be updated
 	periodically.
 
 	To see when these datasets were last updated for this R package, run
 	\code{\link{downloadDates}}.
 }
 \examples{
-
-
+ 
 # simple misspelling
 synonymMatch('Crotalus_atrix', db = 'squamates')
 
 # synonym
 synonymMatch('Pipistrellus_macrotis', db = 'mammals')
 
-#synonym with slight misspelling
+# synonym with slight misspelling
 synonymMatch('Tangara_pulchirrima', db = 'birds')
 
-#no match, but return multiple
+# no match, but return multiple
 synonymMatch('Masticophis_flagellum', db = 'squamates', returnMultiple = TRUE)
 
 }
 \references{
-HBW and BirdLife International.2017. Handbook of the Birds of the World and BirdLife 
+HBW and BirdLife International. 2017. Handbook of the Birds of the World and BirdLife 
 International digital checklist of the birds of the world. Version 2 Available at: 
-http://datazone.birdlife.org/userfiles/file/Species/Taxonomy/HBW-BirdLife_Checklist_Version_2.zip 
-[.xls zipped 1 MB].
+\url{http://datazone.birdlife.org/userfiles/file/Species/Taxonomy/HBW-BirdLife_Checklist_Version_2.zip}
 
-Don E. Wilson & DeeAnn M. Reeder (editors). 2005. Mammal Species of the
+Don E. Wilson and DeeAnn M. Reeder (editors). 2005. Mammal Species of the
 World. A Taxonomic and Geographic Reference (3rd ed), Johns Hopkins
-University Press, 2,142 pp.
+University Press, 2, 142 pp.
 
 Uetz P., Hosek, J. (ed.). 2016. The Reptile Database,
-http://www.reptile-database.org.
+\url{http://www.reptile-database.org}.
 }
 \author{
 Pascal Title

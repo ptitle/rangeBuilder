@@ -4,10 +4,19 @@
 \alias{getDynamicAlphaHull}
 \title{Generate polygon based on alpha hulls}
 \usage{
-getDynamicAlphaHull(x, fraction = 0.95, partCount = 3, buff = 10000,
-  initialAlpha = 3, coordHeaders = c("Longitude", "Latitude"),
-  clipToCoast = "terrestrial", proj = "+proj=longlat +datum=WGS84",
-  alphaIncrement = 1, verbose = FALSE, alphaCap = 400)
+getDynamicAlphaHull(
+  x,
+  fraction = 0.95,
+  partCount = 3,
+  buff = 10000,
+  initialAlpha = 3,
+  coordHeaders = c("Longitude", "Latitude"),
+  clipToCoast = "terrestrial",
+  proj = "+proj=longlat +datum=WGS84",
+  alphaIncrement = 1,
+  verbose = FALSE,
+  alphaCap = 400
+)
 }
 \arguments{
 \item{x}{dataframe of coordinates in decimal degrees, with a minimum of 3

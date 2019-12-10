@@ -4,8 +4,13 @@
 \alias{rasterStackFromPolyList}
 \title{Polygon List to rasterStack}
 \usage{
-rasterStackFromPolyList(polyList, resolution = 50000,
-  retainSmallRanges = TRUE, extent = "auto", nthreads = 1)
+rasterStackFromPolyList(
+  polyList,
+  resolution = 50000,
+  retainSmallRanges = TRUE,
+  extent = "auto",
+  nthreads = 1
+)
 }
 \arguments{
 \item{polyList}{a list of SpatialPolygon objects, named with taxon names}

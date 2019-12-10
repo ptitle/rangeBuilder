@@ -3,7 +3,6 @@
 \docType{package}
 \name{rangeBuilder}
 \alias{rangeBuilder}
-\alias{rangeBuilder-package}
 \title{rangeBuilder}
 \description{
 Provides tools for filtering occurrence records, standardizing countries and 

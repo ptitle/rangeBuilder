@@ -4,8 +4,7 @@
 \alias{standardizeCountry}
 \title{Standardize country name}
 \usage{
-standardizeCountry(country, fuzzyDist = 1, nthreads = 1,
-  progressBar = TRUE)
+standardizeCountry(country, fuzzyDist = 1, nthreads = 1, progressBar = TRUE)
 }
 \arguments{
 \item{country}{character vector of country names or ISO codes}

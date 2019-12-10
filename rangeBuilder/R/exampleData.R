@@ -17,7 +17,8 @@
 ##' 	available for download from \url{https://www.soest.hawaii.edu/pwessel/gshhg/}. 
 ##' 	
 ##' @references
-##' 	Wessel, P., and W. H. F. Smith, A Global Self-consistent, Hierarchical, High-resolution ##' 	Shoreline Database, J. Geophys. Res., 101, 8741-8743, 1996.
+##' 	Wessel, P., and W. H. F. Smith, A Global Self-consistent, Hierarchical, High-resolution 
+##' 	Shoreline Database, J. Geophys. Res., 101, 8741-8743, 1996.
 ##' 
 ##' 
 ##' 

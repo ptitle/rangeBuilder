@@ -32,7 +32,7 @@
 closestCountry <- function(pt, proj = "+proj=longlat +datum=WGS84") {
 
 	# if spatial object
-	if (class(pt) %in% c('SpatialPoints', 'SpatialPointsDataFrame')) {
+	if (any(inherits(pt, c('SpatialPoints', 'SpatialPointsDataFrame')))) {
 		proj <- proj4string(pt)
 		if (is.na(proj)) {
 			stop('If pt is a SpatialPoints object, it must have a proj4string.')

@@ -29,7 +29,7 @@ Changes in rangeBuilder
   * add onLand check to flipSign function
   * improvement to worldRaster, leads to greater accuracy with filterByLand.
   * miscellaneous small modifications.
-  2018-01-**
+  20XX-XX-XX
   * rewrite of synonymMatch to include subspecies matching
   * inclusion of new functions to query species country datasets for birds, mammals, amphibians, squamates
   * update to internal closestCountry dataset for more accurate country matching from coordinates

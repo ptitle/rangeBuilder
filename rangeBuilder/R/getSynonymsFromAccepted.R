@@ -18,7 +18,7 @@
 ##' \url{http://www.departments.bucknell.edu/biology/resources/msw3/}.
 ##' 
 ##' The amphibian database is a local copy of the AmphibiaWeb taxonomy
-##' (\url{amphibiaweb.org/taxonomy/index.html}), which will be updated
+##' (\url{https://amphibiaweb.org/taxonomy/index.html}), which will be updated
 ##' periodically.
 ##' 
 ##' To see when these datasets were last updated for this R package, run

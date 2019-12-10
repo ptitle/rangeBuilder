@@ -75,8 +75,8 @@
 
 rasterStackFromPolyList <- function(polyList, resolution = 50000, retainSmallRanges = TRUE, extent = 'auto', nthreads = 1) {
 	
-	if (class(polyList) == 'list') {
-		if (!class(polyList[[1]]) %in% c('SpatialPolygons', 'SpatialPolygonsDataFrame')) {
+	if (is.list(polyList)) {
+		if (!any(inherits(polyList[[1]], c('SpatialPolygons', 'SpatialPolygonsDataFrame')))) {
 			stop('Input must be a list of SpatialPolygons or a RasterStack.')
 		}
 	}
@@ -130,9 +130,9 @@ rasterStackFromPolyList <- function(polyList, resolution = 50000, retainSmallRan
 		if (length(smallSp) > 0) {
 			for (i in 1:length(smallSp)) {
 				try(presenceCells <- unique(raster::cellFromXY(ret[[smallSp[i]]], sp::spsample(polyList[[smallSp[i]]], 10, type = 'random'))), silent = TRUE)
-				if ('try-error' %in% class(presenceCells)) {
+				if (inherits(presenceCells, 'try-error')) {
 					counter <- 1
-					while ('try-error' %in% class(presenceCells) & counter < 10) {
+					while (inherits(presenceCells, 'try-error') & counter < 10) {
 						try(presenceCells <- unique(raster::cellFromXY(ret[[smallSp[i]]], sp::spsample(polyList[[smallSp[i]]], 10, type = 'random'))), silent = TRUE)
 					}
 				}

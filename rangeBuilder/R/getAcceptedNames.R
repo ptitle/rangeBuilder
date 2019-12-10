@@ -22,7 +22,7 @@
 ##' \url{http://www.departments.bucknell.edu/biology/resources/msw3/}.
 ##' 
 ##' The amphibian database is a local copy of the AmphibiaWeb taxonomy
-##' (\url{amphibiaweb.org/taxonomy/index.html}), which will be updated
+##' (\url{https://amphibiaweb.org/taxonomy/index.html}), which will be updated
 ##' periodically.
 ##' 
 ##' To see when these datasets were last updated for this R package, run
@@ -32,7 +32,7 @@
 ##' 
 ##' BirdLife International. 2015. The BirdLife checklist of the birds of the
 ##' world: Version 8. Downloaded from
-##' http://www.birdlife.org/datazone/userfiles/file/Species/Taxonomy/BirdLife_Checklist_Version_80.zip
+##' \url{http://www.birdlife.org/datazone/userfiles/file/Species/Taxonomy/BirdLife_Checklist_Version_80.zip}
 ##' [.xls zipped 1 MB].
 ##' 
 ##' Don E. Wilson & DeeAnn M. Reeder (editors). 2005. Mammal Species of the
@@ -40,7 +40,7 @@
 ##' University Press, 2,142 pp.
 ##' 
 ##' Uetz P., Hosek, J. (ed.). 2016. The Reptile Database,
-##' http://www.reptile-database.org (accessed 30 April 2016).
+##' /url{http://www.reptile-database.org} (accessed 30 April 2016).
 ##' 
 ##' @return
 ##' \code{getAcceptedNames} returns the list of accepted species names in the

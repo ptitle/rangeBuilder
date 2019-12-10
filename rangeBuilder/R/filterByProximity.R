@@ -38,7 +38,7 @@ filterByProximity <- function(xy, dist, mapUnits = FALSE, returnIndex = FALSE) {
 	#xy can be either a SpatialPoints or SPDF object, or a matrix
 	#dist is in km if mapUnits=F, in mapUnits otherwise
 	#returnIndex = TRUE will return indices of points that would be dropped
-	if (class(xy) == 'data.frame') {
+	if (inherits(xy, 'data.frame')) {
 		xy <- as.matrix(xy)
 	}
 	if (!mapUnits) {
@@ -64,7 +64,7 @@ filterByProximity <- function(xy, dist, mapUnits = FALSE, returnIndex = FALSE) {
 			}
 		}
 		discard <- discard[complete.cases(discard),]
-		if (class(discard) == 'matrix') {
+		if (inherits(discard, 'matrix')) {
 			if (returnIndex) {
 				return(discard[,1])
 			} else {

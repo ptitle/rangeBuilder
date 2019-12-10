@@ -92,7 +92,7 @@ flipSign <- function(coordVec, country, returnMultiple = FALSE, filterByLand = T
 		allcoords <- allcoords[filterByLand(allcoords, proj = proj),]
 	}
 	
-	if (class(allcoords) == 'numeric') {
+	if (inherits(allcoords, 'numeric')) {
 		allcoords <- matrix(allcoords, nrow = 1)
 	}
 

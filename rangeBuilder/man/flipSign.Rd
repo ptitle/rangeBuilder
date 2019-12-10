@@ -4,8 +4,13 @@
 \alias{flipSign}
 \title{Flip sign of coordinates}
 \usage{
-flipSign(coordVec, country, returnMultiple = FALSE, filterByLand = TRUE,
-  proj = "+proj=longlat +datum=WGS84")
+flipSign(
+  coordVec,
+  country,
+  returnMultiple = FALSE,
+  filterByLand = TRUE,
+  proj = "+proj=longlat +datum=WGS84"
+)
 }
 \arguments{
 \item{coordVec}{numeric vector of length 2: longitude, latitude}
