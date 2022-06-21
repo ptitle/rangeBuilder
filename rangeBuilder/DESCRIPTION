@@ -1,19 +1,18 @@
 Package: rangeBuilder
 Type: Package
 Title: Occurrence Filtering, Geographic and Taxonomic Standardization and Generation of Species Range Polygons
-Version: 1.5
-Date: 2019-12-05
-Author: Pascal Title
-Maintainer: Pascal Title <ptitle@umich.edu>
-Imports: alphahull, stringi, stringdist, rgeos (>= 0.1-4), raster, pbapply, cleangeo, rgdal, methods, Rcpp (>= 0.12.9)
+Version: 1.6
+Authors@R: person("Pascal", "Title", email = "ptitle@umich.edu", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-6316-0736"))
+Imports: alphahull (>= 2.5), stringi, stringdist, rgeos (>= 0.1-4), raster, pbapply, cleangeo, methods, Rcpp (>= 0.12.9)
 Depends: sp, data.table (>= 1.10), R (>= 3.5.0)
 Description: Provides tools for filtering occurrence records, generating alpha-hull-derived range polygons and mapping species distributions. 
-License: ACM
+License: GPL (>= 3)
 URL: https://github.com/ptitle/rangeBuilder
+BugReports: https://github.com/ptitle/rangeBuilder/issues
 NeedsCompilation: yes
 LinkingTo: Rcpp
 SystemRequirements: C++11
 LazyData: true
 Encoding: UTF-8
-RoxygenNote: 7.0.2
+RoxygenNote: 7.2.0
 ByteCompile: true

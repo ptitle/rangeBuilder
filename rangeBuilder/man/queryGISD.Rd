@@ -21,7 +21,7 @@ Returns a list of countries, categorized as native and invasive range.
 \details{
 This function returns distribution information as found on the Distribution
 tab from the Global Invasive Species Database:
-\url{http://www.issg.org/database/welcome/}
+\url{http://www.iucngisd.org/gisd/}
 
 Because of how the GISD webservice is designed, it is possible to have the
 same country listed under both native and invasive distributions. This is

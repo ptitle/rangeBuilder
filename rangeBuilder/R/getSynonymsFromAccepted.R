@@ -11,7 +11,7 @@
 ##' that are listed as such on the website.
 ##' 
 ##' The bird database is the BirdLife Taxonomic Checklist v8.0 as downloaded
-##' from \url{http://www.birdlife.org/datazone/info/taxonomy}.
+##' from \url{http://datazone.birdlife.org/species/taxonomy}.
 ##' 
 ##' The mammal database is Wilson and Reeder's Mammal Species of the World, 3rd
 ##' edition, downloaded from

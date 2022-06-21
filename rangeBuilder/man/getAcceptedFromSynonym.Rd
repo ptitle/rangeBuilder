@@ -20,7 +20,7 @@ periodically. The list of accepted names within this R package are those
 that are listed as such on the website.
 
 The bird database is the BirdLife Taxonomic Checklist v8.0 as downloaded
-from \url{http://www.birdlife.org/datazone/info/taxonomy}.
+from \url{http://datazone.birdlife.org/species/taxonomy}.
 
 The mammal database is Wilson and Reeder's Mammal Species of the World, 3rd
 edition, downloaded from
@@ -37,7 +37,7 @@ Citation:
 
 BirdLife International. 2015. The BirdLife checklist of the birds of the
 world: Version 8. Downloaded from
-\url{http://www.birdlife.org/datazone/userfiles/file/Species/Taxonomy/BirdLife_Checklist_Version_80.zip}
+\url{http://datazone.birdlife.org/species/taxonomy}
 [.xls zipped 1 MB].
 
 Don E. Wilson & DeeAnn M. Reeder (editors). 2005. Mammal Species of the

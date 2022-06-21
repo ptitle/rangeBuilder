@@ -70,7 +70,7 @@
 ##' addRasterLegend(r, location = 'right')
 ##' addRasterLegend(r, location = 'top')
 ##' 
-##' #fine-tune placement
+##' # fine-tune placement
 ##' plot(r, legend = FALSE)
 ##' addRasterLegend(r, location=c(181000, 181100, 330500, 331500), side = 4)
  

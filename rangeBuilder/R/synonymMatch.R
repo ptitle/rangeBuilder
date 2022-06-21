@@ -36,7 +36,6 @@
 ##'		\item Same as first pass, but with consideration of alternate latin suffixes and 
 ##' 	all genus/species combinations.
 ##'		}
-##' 	\cr
 ##'	
 ##' 	The squamate database is a local copy of the Reptile Database
 ##' 	(\url{http://reptile-database.reptarium.cz/}), which will be updated
@@ -44,7 +43,7 @@
 ##' 	that are listed as such on the website.
 ##' 
 ##' 	The bird database is the BirdLife Taxonomic Checklist as downloaded
-##' 	from \url{http://www.birdlife.org/datazone/info/taxonomy}.
+##' 	from \url{http://datazone.birdlife.org/species/taxonomy}.
 ##' 
 ##' 	The mammal database is Wilson and Reeder's Mammal Species of the World, 3rd
 ##' 	edition, downloaded from
