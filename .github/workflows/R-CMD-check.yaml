@@ -13,10 +13,7 @@ jobs:
     runs-on: ${{ matrix.config.os }}
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
-
-    defaults:
-	run:
-	  working-directory: ./rangeBuilder
+    working-directory: rangeBuilder
 
     strategy:
       fail-fast: false
