@@ -1,7 +1,0 @@
-.gitignore
-*.DS_Store
-supportFunctions/*
-*/rangeBuilder.Rcheck/*
-*.tar.gz
-*.Rapp.history
-*.Rhistory
