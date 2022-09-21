@@ -181,7 +181,7 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
   
 	if (clipToCoast != 'no') {
 		# load built-in gshhs dataset
-		data(gshhs, envir = environment())
+		data(gshhs, envir = environment(), package = 'rangeBuilder')
 		gshhs <- sp::spTransform(gshhs, CRS(proj4string(hull)))
 		if (clipToCoast == 'terrestrial') {
 			hull <- rgeos::gIntersection(hull, gshhs)
