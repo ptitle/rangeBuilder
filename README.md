@@ -16,6 +16,6 @@ Stable versions of ```rangeBuilder``` are available for installation from CRAN f
 
 Pre-release versions can be obtained with 
 
-	remotes::install_github("ptitle/rangeBuilder/rangeBuilder")
+	remotes::install_github("ptitle/rangeBuilder")
 	
 
