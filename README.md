@@ -18,4 +18,12 @@ Pre-release versions can be obtained with
 
 	remotes::install_github("ptitle/rangeBuilder")
 	
-
+Updates
+-------
+18 Nov 2022: All taxon-specific functionality (synonymy matching, etc) has 
+been removed as the datasets were outdated, improvements were waiting to 
+be made, and CRAN policies make it difficult to include all of the 
+necessary datasets while maintaining small file sizes. 
+The R package now is more exclusively focused on species occurrence record 
+cleaning and mapping. I hope to resurrect the taxon-specific functionality 
+in the future.
