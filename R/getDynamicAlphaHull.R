@@ -13,11 +13,12 @@
 ##' returned.
 ##' 
 ##' If \code{clipToCoast} is set to "terrestrial" or "aquatic", the resulting
-##' polygon is clipped to the coastline, using the \code{\link{gshhs}} dataset
-##' provided with this package.
+##' polygon is clipped to the coastline, using a basemap from naturalearth. 
+##' The first time this function is run, this basemap will be downloaded. 
+##' Subsequent calls will use the downloaded map.
 ##' 
 ##' @param x dataframe of coordinates in decimal degrees, with a minimum of 3
-##' rows.
+##' rows. 
 ##' @param fraction the minimum fraction of occurrences that must be included
 ##' in polygon.
 ##' @param partCount the maximum number of disjunct polygons that are allowed.
@@ -29,14 +30,12 @@
 ##' @param clipToCoast Either "no" (no clipping), "terrestrial" (only
 ##' terrestrial part of range is kept) or "aquatic" (only non-terrestrial part
 ##' is clipped). See Details.
-##' @param proj the projection information for x. The default is currently the
-##' only supported option.
 ##' @param alphaIncrement the amount to increase alpha with each iteration
 ##' @param verbose prints the alpha value to the console, intended for
 ##' debugging.
 ##' @param alphaCap Max alpha value before function aborts and returns a
 ##' minimum convex hull.
-##' @return a list with 2 elements: \item{hull}{ a SpatialPolygons object }
+##' @return a list with 2 elements: \item{hull}{ a sf polygon object }
 ##' \item{alpha}{ the alpha value that was found to satisfy the criteria.  If a
 ##' convex hull was returned, this will list MCH.  }
 ##' @author Pascal Title
@@ -55,18 +54,17 @@
 ##' plot(range[[1]], col=transparentColor('dark green', 0.5), border = NA)
 ##' points(x[,c('decimallongitude','decimallatitude')], cex = 0.5, pch = 3)
 ##' 
-##' # to add a basic coastline
-##' # plot(gshhs, add = TRUE)
+##' # to add a basic coastline, you can use the internal map
+##' # world <- rangeBuilder:::loadWorldMap()
+##' # plot(world, add = TRUE, lwd = 0.5)
 ##' 
 ##' @export
 
-getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000, initialAlpha = 3, coordHeaders = c('Longitude', 'Latitude'), clipToCoast = 'terrestrial', proj = "+proj=longlat +datum=WGS84", alphaIncrement = 1, verbose = FALSE, alphaCap = 400) {
+getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000, initialAlpha = 3, coordHeaders = c('Longitude', 'Latitude'), clipToCoast = 'terrestrial', alphaIncrement = 1, verbose = FALSE, alphaCap = 400) {
+	
+	# fraction = 0.95; partCount = 3; buff = 10000; initialAlpha = 3; coordHeaders = c('Longitude', 'Latitude'); clipToCoast = 'terrestrial'; alphaIncrement = 1; verbose = FALSE; alphaCap = 400
 
-	if (proj != "+proj=longlat +datum=WGS84") {
-		stop("Currently, proj can only be '+proj=longlat +datum=WGS84'.")
-	}
-
-	if (clipToCoast == FALSE) {clipToCoast <- 'no'}
+	if (clipToCoast == FALSE) clipToCoast <- 'no'
 	clipToCoast <- match.arg(clipToCoast, c('no', 'terrestrial', 'aquatic'))
 
 	if (ncol(x) == 2) {
@@ -75,7 +73,7 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 
 	#reduce to unique coordinates
 	x <- x[!duplicated(x[,coordHeaders]), coordHeaders]
-	x <- x[complete.cases(x),]
+	x <- x[stats::complete.cases(x),]
 	
 	if (nrow(x) < 3) {
 		stop('This function requires a minimum of 3 unique coordinates (after removal of duplicates).')
@@ -86,10 +84,9 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 		x <- x[sample(1:nrow(x),size = nrow(x)),]
 	}
 
-	#create spatialpoints
-	x <- SpatialPoints(x, proj4string = CRS(proj))
-	x <- remove.duplicates(x)
-	if (length(x) < 3) {
+	#create spatial points object
+	x <- sf::st_as_sf(as.data.frame(x), coords = 1:2, crs = 4326)
+	if (nrow(x) < 3) {
 		stop('This function requires a minimum of 3 unique coordinates.')
 	}
 
@@ -97,13 +94,33 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 	#continue until fraction is reached
 	alpha <- initialAlpha
 	problem <- FALSE
-	if (verbose) {cat('\talpha:', alpha, '\n')}
+	if (verbose) cat('\talpha:', alpha, '\n')
 
-	hull <- try(alphahull::ahull(data.frame(x),alpha = alpha), silent = TRUE)
+
+	hull <- try(alphahull::ahull(sf::st_coordinates(x), alpha = alpha), silent = TRUE)
+	
+	# possible that ahull is detecting duplicate points despite previous checks
+	dropPt <- c()
+	while (inherits(hull, 'try-error') & any(grepl('duplicate points', hull))) {
+		ptDist <- sf::st_distance(x, x)
+		diag(ptDist) <- NA
+		units(ptDist) <- NULL
+		closest <- which(ptDist == min(ptDist, na.rm = TRUE), arr.ind = TRUE)
+		hull <- try(alphahull::ahull(sf::st_coordinates(x)[- closest[1,1]], alpha = alpha), silent = TRUE)
+		if (inherits(hull, 'ahull')) {
+			dropPt <- closest[1,1]
+		}
+	}
+	if (length(dropPt) > 0) {
+		x <- x[- dropPt,]
+	}
+	
+	hull <- try(alphahull::ahull(sf::st_coordinates(x), alpha = alpha), silent = TRUE)
+	
 	while (inherits(hull, 'try-error')) {
 		if (verbose) {cat('\talpha:', alpha, '\n')}
 		alpha <- alpha + alphaIncrement
-		hull <- try(alphahull::ahull(data.frame(x),alpha = alpha), silent = TRUE)
+		hull <- try(alphahull::ahull(sf::st_coordinates(x), alpha = alpha), silent = TRUE)
 		if (alpha > alphaCap) {
 			problem <- TRUE
 			break
@@ -112,81 +129,88 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 	
 	if (!problem) {
 
-		hull <- ah2sp(hull, proj4string = CRS('+proj=longlat +datum=WGS84'))
-	
-		if (!is.null(hull)) {
-			slot(hull, "polygons") <- lapply(slot(hull, "polygons"), checkPolygonsGEOS2)
+		hull <- ah2sf(hull)
+		
+		validityCheck <- function(hull) {
+			if (!is.null(hull) & !inherits(hull, 'try-error')) {
+				if (!all(sf::st_is_valid(hull))) {
+					TRUE
+				} else {
+					FALSE
+				}
+			} else {
+				FALSE
+			}
 		}
-	 
-		while (is.null(hull) | inherits(hull, 'try-error') | !cleangeo::clgeo_IsValid(hull)) {
+
+		while (is.null(hull) | inherits(hull, 'try-error') | validityCheck(hull)) {
 			alpha <- alpha + alphaIncrement
 			if (verbose) {cat('\talpha:', alpha, '\n')}
-			hull <- try(ah2sp(alphahull::ahull(data.frame(x),alpha=alpha), proj4string=CRS('+proj=longlat +datum=WGS84')), silent = TRUE)
-			if (!is.null(hull)) {
-				slot(hull, "polygons") <- lapply(slot(hull, "polygons"), checkPolygonsGEOS2)
-			}
+			hull <- try(ah2sf(alphahull::ahull(sf::st_coordinates(x), alpha = alpha)), silent = TRUE)
+			if (alpha > alphaCap) {
+				problem <- TRUE
+				break
+			}			
 		}
 	
 		#how many points are within hull?
-		slot(hull, "polygons") <- lapply(slot(hull, "polygons"), checkPolygonsGEOS2)
-		pointWithin <- rgeos::gIntersects(x, hull, byid = TRUE)
+		pointWithin <- sf::st_intersects(x, hull)
 	
 		alphaVal <- alpha
 		buffered <- FALSE
+		
+		buff <- units::set_units(buff, 'm')
 	
-		while (any(length(hull@polygons[[1]]@Polygons) > partCount, length(which(pointWithin) == TRUE)/length(x) < fraction, !cleangeo::clgeo_IsValid(hull))) {
+		while (any(length(hull) > partCount, (sum(lengths(pointWithin)) / nrow(x)) < fraction, !all(sf::st_is_valid(hull)))) {
 		    alpha <- alpha + alphaIncrement
 		    if (verbose) {cat('\talpha:', alpha, '\n')}
-		    hull <- try(alphahull::ahull(data.frame(x), alpha = alpha), silent = TRUE)
+		    hull <- try(alphahull::ahull(sf::st_coordinates(x), alpha = alpha), silent = TRUE)
 		    while (inherits(hull, 'try-error') & alpha <= alphaCap) {
 		      alpha <- alpha + alphaIncrement
-		      hull <- try(alphahull::ahull(data.frame(x),alpha = alpha), silent = TRUE)
+		      hull <- try(alphahull::ahull(sf::st_coordinates(x),alpha = alpha), silent = TRUE)
 		    }
 			if (!inherits(hull, 'try-error')) {
-				hull <- ah2sp(hull, proj4string = CRS('+proj=longlat +datum=WGS84'))
-				hull <- sp::spTransform(hull, CRS("+init=epsg:3395"))
-				if (cleangeo::clgeo_IsValid(hull)) {
-					slot(hull, "polygons") <- lapply(slot(hull, "polygons"), checkPolygonsGEOS2)
-					hull <- rgeos::gBuffer(hull, width = buff)
-					hull <- sp::spTransform(hull, CRS(proj))
+				hull <- ah2sf(hull)
+				hull <- sf::st_transform(hull, crs = '+proj=eqearth')
+				if (all(sf::st_is_valid(hull))) {
+					hull <- sf::st_buffer(hull, dist = buff)
+					hull <- sf::st_transform(hull, crs = 4326)
 					buffered <- TRUE
-					pointWithin <- rgeos::gIntersects(x, hull, byid = TRUE)
+					pointWithin <- sf::st_intersects(x, hull)
 				}
 			}
-			alphaVal = alpha
+			alphaVal <- alpha
 			if (alpha > alphaCap) {
-				hull <- rgeos::gConvexHull(x)
-				hull <- sp::spTransform(hull, CRS("+init=epsg:3395"))
-			    hull <- rgeos::gBuffer(hull, width = buff)
-			    hull <- sp::spTransform(hull, CRS(proj))
+				hull <- sf::st_convex_hull(x)
+				hull <- sf::st_transform(hull, crs = '+proj=eqearth')
+			    hull <- sf::st_buffer(hull, dist = buff)
+			    hull <- sf::st_transform(hull, crs = 4326)
 				buffered <- TRUE
 				alphaVal = 'MCH'
 				break
 			}
 		}
 	} else {
-		hull <- rgeos::gConvexHull(x)
-		hull <- sp::spTransform(hull, CRS("+init=epsg:3395"))
-	    hull <- rgeos::gBuffer(hull, width = buff)
-	    hull <- sp::spTransform(hull, CRS(proj))
+		hull <- sf::st_convex_hull(x)
+		hull <- sf::st_transform(hull, crs = '+proj=eqearth')
+	    hull <- sf::st_buffer(hull, dist = buff)
+	    hull <- sf::st_transform(hull, crs = 4326)
 		buffered <- TRUE
 		alphaVal = 'MCH'
 	}
 
 	if (!buffered) {
-		hull <- sp::spTransform(hull, CRS("+init=epsg:3395"))
-		hull <- rgeos::gBuffer(hull, width = buff)
-		hull <- sp::spTransform(hull, CRS(proj))	
+		hull <- sf::st_transform(hull, crs = '+proj=eqearth')
+	    hull <- sf::st_buffer(hull, dist = buff)
+	    hull <- sf::st_transform(hull, crs = 4326)
 	}
   
 	if (clipToCoast != 'no') {
-		# load built-in gshhs dataset
-		data(gshhs, envir = environment(), package = 'rangeBuilder')
-		gshhs <- sp::spTransform(gshhs, CRS(proj4string(hull)))
+		world <- loadWorldMap()		
 		if (clipToCoast == 'terrestrial') {
-			hull <- rgeos::gIntersection(hull, gshhs)
+			hull <- sf::st_intersection(hull, world)
 		} else {
-			hull <- rgeos::gDifference(hull, gshhs)
+			hull <- sf::st_difference(hull, world)
 		}
 	}
   
@@ -194,104 +218,23 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 }
 
 
-
-#taken from the maptools package
-checkPolygonsGEOS2 <- function(obj, properly = TRUE, force = TRUE, useSTRtree = FALSE) {
-	if (!is(obj, "Polygons")) 
-	    stop("not a Polygons object")
-	comm <- try(rgeos::createPolygonsComment(obj), silent = TRUE)
-	if (!inherits(comm, "try-error") && !force) {
-	    comment(obj) <- comm
-	    return(obj)
+loadWorldMap <- function() {
+	# load medium-level resolution landmass vector map from natural-earth
+	## download if needed
+	worldpath <- paste0(find.package(package = 'rangeBuilder'), '/extdata/world.rds')
+	if (!file.exists(worldpath)) {
+		message('\n\tDownloading a world basemap for clipping. This only needs to happen once.\n\n')
+		world <- rnaturalearth::ne_download(scale = 'medium', type = 'land', category = 'physical', returnclass = 'sf')
+		world <- sf::st_geometry(world)
+		world <- sf::st_combine(world)
+		if (!dir.exists(paste0(find.package(package = 'rangeBuilder'), '/extdata'))) {
+			dir.create(paste0(find.package(package = 'rangeBuilder'), '/extdata'))
+		}
+		saveRDS(world, file = worldpath)	
+	} else {
+		world <- readRDS(worldpath)
 	}
-	pls <- slot(obj, "Polygons")
-	IDs <- slot(obj, "ID")
-	n <- length(pls)
-	if (n < 1) 
-	    stop("Polygon list of zero length")
-	uniqs <- rep(TRUE, n)
-	if (n > 1) {
-	    if (useSTRtree) 
-	        tree1 <- rgeos::gUnarySTRtreeQuery(obj)
-	    SP <- SpatialPolygons(lapply(1:n, function(i) Polygons(list(pls[[i]]), ID = i)))
-	    for (i in 1:(n - 1)) {
-	        if (useSTRtree) {
-	            if (!is.null(tree1[[i]])) {
-	              res <- try(rgeos::gEquals(SP[i, ], SP[tree1[[i]],], byid = TRUE), silent = TRUE)
-	              if (inherits(res, "try-error")) {
-	                warning("Polygons object ", IDs, ", Polygon ", i, ": ", res)
-	                next
-	              }
-	              if (any(res)) {
-	                uniqs[as.integer(rownames(res)[res])] <- FALSE
-	              }
-				}
-	        }
-	        else {
-	            res <- try(rgeos::gEquals(SP[i, ], SP[uniqs,], byid = TRUE), silent = TRUE)
-	            if (inherits(res, "try-error")) {
-	              warning("Polygons object ", IDs, ", Polygon ", i, ": ", res)
-	              next
-	            }
-	            res[i] <- FALSE
-	            if (any(res)) {
-	              wres <- which(res)
-	              uniqs[wres[wres > i]] <- FALSE
-	            }
-	        }
-	    }
-	}
-	if (any(!uniqs)) 
-	    warning(paste("Duplicate Polygon objects dropped:", paste(wres, collapse = " ")))
-	pls <- pls[uniqs]
-	n <- length(pls)
-	if (n < 1) 
-	    stop("Polygon list of zero length")
-	if (n == 1) {
-	    oobj <- Polygons(pls, ID = IDs)
-	    comment(oobj) <- rgeos::createPolygonsComment(oobj)
-	    return(oobj)
-	}
-	areas <- sapply(pls, slot, "area")
-	pls <- pls[order(areas, decreasing = TRUE)]
-	oholes <- sapply(pls, function(x) slot(x, "hole"))
-	holes <- rep(FALSE, n)
-	SP <- SpatialPolygons(lapply(1:n, function(i) Polygons(list(pls[[i]]), ID = i)))
-	if (useSTRtree) 
-	    tree2 <- rgeos::gUnarySTRtreeQuery(SP)
-	for (i in 1:(n - 1)) {
-	    if (useSTRtree) {
-	        if (!is.null(tree2[[i]])) {
-	            if (properly) 
-	              res <- rgeos::gContainsProperly(SP[i, ], SP[tree2[[i]], ], byid = TRUE)
-	            else res <- rgeos::gContains(SP[i, ], SP[tree2[[i]], ], byid = TRUE)
-	        }
-	        else {
-	            res <- FALSE
-	        }
-	    }
-	    else {
-	        if (properly) 
-	            res <- rgeos::gContainsProperly(SP[i, ], SP[-(1:i), ], byid = TRUE)
-	        else res <- rgeos::gContains(SP[i, ], SP[-(1:i), ], byid = TRUE)
-	    }
-	    wres <- which(res)
-	    if (length(wres) > 0L) {
-	        nres <- as.integer(rownames(res))
-	        holes[nres[wres]] <- !holes[nres[wres]]
-	    }
-	}
-	for (i in 1:n) {
-	    if (oholes[i] != holes[i]) 
-	        pls[[i]] <- Polygon(slot(pls[[i]], "coords"), hole = holes[i])
-	}
-	oobj <- Polygons(pls, ID = IDs)
-	comment(oobj) <- rgeos::createPolygonsComment(oobj)
-	oobj
+	return(world)
 }
-
-
-
-
 
 

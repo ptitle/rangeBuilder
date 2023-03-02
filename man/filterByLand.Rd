@@ -4,14 +4,14 @@
 \alias{filterByLand}
 \title{Filter occurrences based on land vs ocean}
 \usage{
-filterByLand(coords, proj = "+proj=longlat +datum=WGS84")
+filterByLand(coords, crs = 4326)
 }
 \arguments{
 \item{coords}{coordinates in the form of a 2 column numeric matrix,
-data.frame, numeric vector, or SpatialPoints object. If Spatial object,
-proj4string must be specified.}
+data.frame, numeric vector, or spatial points object (sf or sp). 
+If spatial object, crs must be defined.}
 
-\item{proj}{proj4string of input coords. Ignored if input coords are
+\item{crs}{crs of input coords. Ignored if input coords are
 spatial object.}
 }
 \value{
@@ -33,6 +33,18 @@ data(crotalus)
 
 #identify points that fall off land
 filterByLand(crotalus[,c('decimallongitude','decimallatitude')])
+
+
+# testing different input options
+samp <- sample(1:nrow(crotalus), 10)
+xy <- crotalus[samp, c('decimallongitude', 'decimallatitude')]
+sfpts <- sf::st_as_sf(xy, coords = c('decimallongitude', 'decimallatitude'), crs = 4326)
+sfptsEA <- sf::st_transform(sfpts, crs = '+proj=eqearth')
+spPts <- as(sfpts, 'Spatial')
+filterByLand(xy)
+filterByLand(sfpts)
+filterByLand(sfptsEA)
+filterByLand(spPts)
 
 }
 \author{

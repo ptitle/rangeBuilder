@@ -46,7 +46,7 @@ standardizeCountry <- function(country, fuzzyDist = 1, nthreads = 1, progressBar
 	country <- gsub('\\?|\\[|\\]', '', country)
 	country <- gsub('\\/', '', country)
 	country <- gsub('\\s+', ' ', country)
-	country <- trim(country)
+	country <- gsub("^\\s+|\\s+$", "", country)
 	
 	# prepare results vector
 	res <- character(length(country))
@@ -78,13 +78,13 @@ standardizeCountry <- function(country, fuzzyDist = 1, nthreads = 1, progressBar
 	
 			if (length(ind) == 0) {
 				# second, test for fuzzy matching with accepted names
-				d <- adist(val, names(countryList))
+				d <- utils::adist(val, names(countryList))
 				mind <- which.min(d)
 				if (d[mind] <= fuzzyDist) {
 					ind <- mind
 				} else {
 					# third, check each alternative with fuzzy match
-					d <- sapply(countryList, function(y) adist(val, y))
+					d <- sapply(countryList, function(y) utils::adist(val, y))
 					d <- sapply(d, min)
 					mind <- which.min(d)
 					if (d[mind] <= fuzzyDist) {

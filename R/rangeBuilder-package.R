@@ -1,7 +1,6 @@
 ##' @title rangeBuilder
-##' @description Provides tools for filtering occurrence records, standardizing countries and 
-##' species names, generating alpha-hull-derived range polygons and mapping species 
-##' distributions. 
+##' @description Provides tools for filtering occurrence records, standardizing countries names, 
+##' generating alpha-hull-derived range polygons and mapping species distributions. 
 ##' 
 ##' @author Pascal Title <ptitle@umich.edu>
 ##' 
@@ -18,8 +17,6 @@
 ##' @importFrom Rcpp evalCpp
 ##' @importFrom Rcpp sourceCpp
 ##'
-##' @import sp
-##' @import data.table
 ##' @import methods
 ##' 
 ##' 
@@ -27,8 +24,6 @@
 ##' @importFrom grDevices col2rgb colorRampPalette rgb terrain.colors
 ##' @importFrom graphics axis grconvertX grconvertY par rect
 ##' @importFrom methods hasArg is slot slot<-
-##' @importFrom stats complete.cases
-##' @importFrom utils adist data
 ##' 
 ##' 
 ##' 

@@ -1,0 +1,34 @@
+Changes in rangeBuilder
+2016-01-02
+  * initial CRAN submission
+2016-02-24
+  * citation update
+2016-04-11
+  * update of Reptile Database data
+  * addition of AmphibiaWeb taxonomy and synonyms
+  * new function to measure coordinate precision error
+ 2016-10-03
+  * update of Reptile Database data and AmphibiaWeb data
+  * minor bug fix in synonymMatch where multiple matches were returned regardless of
+  	whether or not that was requested.
+  * bug fixes to coordError
+  * add ability of richnessRaster to handle rasterBricks
+  * update citation information
+  * externalize alpha handling in getDynamicAlphaHull
+  * add downloadDates function that reports dates that various datasets were acquired
+  * changed function getExtentOfList to return an object of class extent
+  * updated standardizeCountry to handle ISO-2 and ISO-3 country codes
+ 2017-05-31
+  * add pbapply to get progress bars
+  * update point reference system for closestCountry
+  * Rcpp function for closestCountry
+  * performance improvements to standardizeCountry
+  * modify getDynamicAlphaHull to have the option of clipping to coastline
+    but keeping the non-terrestrial portion of the range.
+  * remove richnessRaster function and replace with rasterStackFromPolyList
+  * add onLand check to flipSign function
+  * improvement to worldRaster, leads to greater accuracy with filterByLand.
+  * miscellaneous small modifications.
+2022-11-18
+  * conversion from sp and raster to sf and terra.
+  * all taxon-specific functionality (synonymy matching, etc) has been removed as the datasets were outdated, improvements were waiting to be made, and CRAN policies make it difficult to include all of the necessary datasets. The R package now is more exclusively focused on species occurrence record cleaning and mapping.

@@ -4,14 +4,14 @@
 \alias{closestCountry}
 \title{Return country from point}
 \usage{
-closestCountry(pt, proj = "+proj=longlat +datum=WGS84")
+closestCountry(pt, crs = 4326)
 }
 \arguments{
 \item{pt}{longitude and latitude, as a numeric vector, 2-column table,
-or SpatialPoints object.}
+or spatial points object.}
 
-\item{proj}{the proj4string of the coordinate. If \code{pt} is a SpatialPoints
-object, proj is ignored.}
+\item{crs}{the CRS of the coordinate. If \code{pt} is a spatial object,
+this argument is ignored. The default 4326 indicates longlat unprojected.}
 }
 \value{
 If one point is provided, a character vector is returned.
@@ -33,6 +33,17 @@ Based on a predetermined set of global points, this function finds the country o
 \examples{
 #point near a country border
 closestCountry(c(-115.436, 32.657))
+
+# testing different input options
+samp <- sample(1:nrow(crotalus), 10)
+xy <- crotalus[samp, c('decimallongitude', 'decimallatitude')]
+sfpts <- sf::st_as_sf(xy, coords = c('decimallongitude', 'decimallatitude'), crs = 4326)
+sfptsEA <- sf::st_transform(sfpts, crs = '+proj=eqearth')
+spPts <- as(sfpts, 'Spatial')
+closestCountry(xy)
+closestCountry(sfpts)
+closestCountry(sfptsEA)
+closestCountry(spPts)
 
 }
 \author{

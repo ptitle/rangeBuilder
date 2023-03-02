@@ -1,10 +1,11 @@
-##' Get extent of list of SpatialPolygons
-##' 
-##' Returns the extent that encompasses all SpatialPolygons in a list
-##' 
-##' 
-##' @param shapes a list of SpatialPolygons
-##' @return an object of class extent
+##' @title Get extent of list
+##'
+##' @description Given a list of SpatialPolygons or sf objects, return 
+##' a bounding box object that encompasses all items. 
+##'
+##' @param shapes a list of SpatialPolygons or simple features
+##'
+##' @return An object of class \code{bbox}. 
 ##' @author Pascal Title
 ##' @examples
 ##' 
@@ -15,24 +16,38 @@
 ##' sp <- lapply(sp, function(x) x[,c('decimallongitude','decimallatitude')])
 ##' sp <- lapply(sp, function(x) x[chull(x),])
 ##' poly <- lapply(sp, function(x) 
-##' 	SpatialPolygons(list(Polygons(list(Polygon(x)), ID = 1))))
+##' 	sf::st_convex_hull(sf::st_combine(sf::st_as_sf(x, coords = 1:2, crs = 4326))))
 ##' 
 ##' getExtentOfList(poly)
 ##' 
 ##' @export
 
-getExtentOfList <- function(shapes) {	
-	x <- lapply(shapes, function(x) bbox(x))
-	minLong <- min(sapply(x, function(x) x[1], simplify = TRUE))
-	maxLong <- max(sapply(x, function(x) x[3], simplify = TRUE))
-	minLat <- min(sapply(x, function(x) x[2], simplify = TRUE))
-	maxLat <- max(sapply(x, function(x) x[4], simplify = TRUE))
+getExtentOfList <- function(shapes) {
 	
-	res <- raster::extent(shapes[[1]])
-	res@xmin <- minLong
-	res@xmax <- maxLong
-	res@ymin <- minLat
-	res@ymax <- maxLat
+	if (inherits(shapes, c('sf', 'sfc')) & !inherits(shapes, 'list')) {
+		shapes <- list(shapes)
+	}
+
+	if (inherits(shapes[[1]], c('SpatialPolygons', 'SpatialPolygonsDataFrame'))) {	
+		shapes <- lapply(shapes, function(x) sf::st_as_sf(x))
+	} 
+	
+	if (inherits(shapes[[1]], c('sf', 'sfc'))) {
+		x <- lapply(shapes, function(x) sf::st_bbox(x))
+	} else {
+		stop('shapes object not recognized.')
+	}
+
+	minLong <- min(sapply(x, function(x) x$xmin, simplify = TRUE), na.rm = TRUE)
+	maxLong <- max(sapply(x, function(x) x$xmax, simplify = TRUE), na.rm = TRUE)
+	minLat <- min(sapply(x, function(x) x$ymin, simplify = TRUE), na.rm = TRUE)
+	maxLat <- max(sapply(x, function(x) x$ymax, simplify = TRUE), na.rm = TRUE)
+
+	res <- x[[1]]
+	res[[1]]<- minLong
+	res[[2]] <- minLat
+	res[[3]] <- maxLong
+	res[[4]] <- maxLat
 	
 	return(res)
 }	

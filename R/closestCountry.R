@@ -2,9 +2,9 @@
 ##' @description Determines which country a given point falls in.
 ##' 
 ##' @param pt longitude and latitude, as a numeric vector, 2-column table,
-##' 	or SpatialPoints object.
-##' @param proj the proj4string of the coordinate. If \code{pt} is a SpatialPoints
-##' 	object, proj is ignored. 
+##' 	or spatial points object.
+##' @param crs the CRS of the coordinate. If \code{pt} is a spatial object,
+##' 	this argument is ignored. The default 4326 indicates longlat unprojected.
 ##' 
 ##' @details 	
 ##' 	Based on a predetermined set of global points, this function finds the country of 
@@ -25,35 +25,55 @@
 ##' @examples
 ##' #point near a country border
 ##' closestCountry(c(-115.436, 32.657))
+##'
+##' # testing different input options
+##' samp <- sample(1:nrow(crotalus), 10)
+##' xy <- crotalus[samp, c('decimallongitude', 'decimallatitude')]
+##' sfpts <- sf::st_as_sf(xy, coords = c('decimallongitude', 'decimallatitude'), crs = 4326)
+##' sfptsEA <- sf::st_transform(sfpts, crs = '+proj=eqearth')
+##' spPts <- as(sfpts, 'Spatial')
+##' closestCountry(xy)
+##' closestCountry(sfpts)
+##' closestCountry(sfptsEA)
+##' closestCountry(spPts)
 ##' 
 ##' @export
 
 
-closestCountry <- function(pt, proj = "+proj=longlat +datum=WGS84") {
+closestCountry <- function(pt, crs = 4326) {
 
+	# convert from sp to sf
+	if (inherits(pt, c('SpatialPoints', 'SpatialPointsDataFrame'))) {
+		pt <- sf::st_as_sf(pt)
+	}	
 	# if spatial object
-	if (any(inherits(pt, c('SpatialPoints', 'SpatialPointsDataFrame')))) {
-		proj <- proj4string(pt)
-		if (is.na(proj)) {
-			stop('If pt is a SpatialPoints object, it must have a proj4string.')
+	if (any(inherits(pt, c('sf', 'sfc')))) {
+		crs <- sf::st_crs(pt)
+		if (is.na(crs)) {
+			stop('If pt is a spatial object, it must have a crs.')
 		}
-		pt <- coordinates(pt)
+		pt <- sf::st_coordinates(pt)
 	}
-
-	# check that provided proj4string is valid
-	CRS(proj)
-
-	if (proj != "+proj=longlat +datum=WGS84") {
-		pt <- SpatialPoints(pt, proj4string=CRS(proj))
-		pt <- spTransform(pt, CRS('+proj=longlat +datum=WGS84'))
+	
+	if (is.numeric(pt) & !is.matrix(pt)) {
+		pt <- matrix(pt, nrow = 1, ncol = 2)
+	} else {
+		pt <- as.matrix(pt)
+	}
+	
+	if (!sf::st_is_longlat(sf::st_crs(crs))) {
+		pt <- sf::st_multipoint(pt)
+		pt <- sf::st_sfc(pt, crs = sf::st_crs(crs))
+		pt <- sf::st_transform(pt, crs = 4326)
+		pt <- sf::st_coordinates(pt)[, c('X', 'Y')]
 	}
 		
-	# if single row table, convert to vector
-	if (is.matrix(pt) | is.data.frame(pt)) {
-		if (nrow(pt) == 1) {
-			pt <- as.numeric(pt)
-		}
-	}
+	# # if single row table, convert to vector
+	# if (is.matrix(pt) | is.data.frame(pt)) {
+		# if (nrow(pt) == 1) {
+			# pt <- as.numeric(pt)
+		# }
+	# }
 
 	# if multiple points
 	if (is.matrix(pt) | is.data.frame(pt)) {
@@ -62,8 +82,7 @@ closestCountry <- function(pt, proj = "+proj=longlat +datum=WGS84") {
 		names(ret) <- NULL
 		return(ret)
 	} else {
-		d <- spDistsN1(worldPoints, pt, longlat = FALSE)
-		w <- which.min(d)
+		w <- shortDistInd(as.matrix(pt), as.matrix(worldPoints))
 		return(worldPointCountries[[w]])
 	} 
 }

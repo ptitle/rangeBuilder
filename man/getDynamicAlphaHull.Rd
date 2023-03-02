@@ -12,7 +12,6 @@ getDynamicAlphaHull(
   initialAlpha = 3,
   coordHeaders = c("Longitude", "Latitude"),
   clipToCoast = "terrestrial",
-  proj = "+proj=longlat +datum=WGS84",
   alphaIncrement = 1,
   verbose = FALSE,
   alphaCap = 400
@@ -39,9 +38,6 @@ longitude and latitude, and \code{coordHeaders} is ignored.}
 terrestrial part of range is kept) or "aquatic" (only non-terrestrial part
 is clipped). See Details.}
 
-\item{proj}{the projection information for x. The default is currently the
-only supported option.}
-
 \item{alphaIncrement}{the amount to increase alpha with each iteration}
 
 \item{verbose}{prints the alpha value to the console, intended for
@@ -51,7 +47,7 @@ debugging.}
 minimum convex hull.}
 }
 \value{
-a list with 2 elements: \item{hull}{ a SpatialPolygons object }
+a list with 2 elements: \item{hull}{ a sf polygon object }
 \item{alpha}{ the alpha value that was found to satisfy the criteria.  If a
 convex hull was returned, this will list MCH.  }
 }
@@ -69,8 +65,9 @@ If the conditions cannot be satisfied, then a minimum convex hull is
 returned.
 
 If \code{clipToCoast} is set to "terrestrial" or "aquatic", the resulting
-polygon is clipped to the coastline, using the \code{\link{gshhs}} dataset
-provided with this package.
+polygon is clipped to the coastline, using a basemap from naturalearth. 
+The first time this function is run, this basemap will be downloaded. 
+Subsequent calls will use the downloaded map.
 }
 \examples{
 
@@ -86,8 +83,9 @@ range <- getDynamicAlphaHull(x, coordHeaders=c('decimallongitude','decimallatitu
 plot(range[[1]], col=transparentColor('dark green', 0.5), border = NA)
 points(x[,c('decimallongitude','decimallatitude')], cex = 0.5, pch = 3)
 
-# to add a basic coastline
-# plot(gshhs, add = TRUE)
+# to add a basic coastline, you can use the internal map
+# world <- rangeBuilder:::loadWorldMap()
+# plot(world, add = TRUE, lwd = 0.5)
 
 }
 \seealso{

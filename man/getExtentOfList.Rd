@@ -2,18 +2,19 @@
 % Please edit documentation in R/getExtentOfList.R
 \name{getExtentOfList}
 \alias{getExtentOfList}
-\title{Get extent of list of SpatialPolygons}
+\title{Get extent of list}
 \usage{
 getExtentOfList(shapes)
 }
 \arguments{
-\item{shapes}{a list of SpatialPolygons}
+\item{shapes}{a list of SpatialPolygons or simple features}
 }
 \value{
-an object of class extent
+An object of class \code{bbox}.
 }
 \description{
-Returns the extent that encompasses all SpatialPolygons in a list
+Given a list of SpatialPolygons or sf objects, return 
+a bounding box object that encompasses all items.
 }
 \examples{
 
@@ -24,7 +25,7 @@ sp <- split(crotalus, crotalus$genSp)
 sp <- lapply(sp, function(x) x[,c('decimallongitude','decimallatitude')])
 sp <- lapply(sp, function(x) x[chull(x),])
 poly <- lapply(sp, function(x) 
-	SpatialPolygons(list(Polygons(list(Polygon(x)), ID = 1))))
+	sf::st_convex_hull(sf::st_combine(sf::st_as_sf(x, coords = 1:2, crs = 4326))))
 
 getExtentOfList(poly)
 

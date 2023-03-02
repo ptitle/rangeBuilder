@@ -18,7 +18,7 @@
 ##' needed sign flips.
 ##' @param filterByLand if \code{TRUE}, alternative coords will be tested for
 ##' whether or not they fall on land.
-##' @param proj the proj4string of the coordinate.
+##' @param crs the crs of the coordinate.
 ##' @return list with 2 elements \item{matched}{ logical: Was the country
 ##' matched } \item{newcoords}{ matrix of coordinates that were successful.  }
 ##' @author Pascal Title
@@ -41,13 +41,10 @@
 ##' @export
 
 
-flipSign <- function(coordVec, country, returnMultiple = FALSE, filterByLand = TRUE, proj = "+proj=longlat +datum=WGS84") {
+flipSign <- function(coordVec, country, returnMultiple = FALSE, filterByLand = TRUE, crs = 4326) {
 #coordVec is a vector: long, lat
 # country is the name of the country associated with those coordinates
 # returnMultiple: if multiple sign flips lead to the correct country, return all options. If FALSE, returns the coords with the fewest needed sign flips.
-
-	# check that provided proj4string is valid
-	CRS(proj)
 
 	if (is.matrix(coordVec) | is.data.frame(coordVec)) {
 		coordVec <- as.numeric(coordVec)
@@ -59,7 +56,7 @@ flipSign <- function(coordVec, country, returnMultiple = FALSE, filterByLand = T
 		stop('Country is not recognized.')
 	}
 
-	if (country %in% closestCountry(coordVec, proj = proj)) {
+	if (country %in% closestCountry(coordVec, crs = crs)) {
 		cat('\tCoordinates already match country.\n')
 		names(coordVec) <- c('long','lat')
 		return(list(matched = TRUE, newcoords = coordVec))
@@ -80,16 +77,16 @@ flipSign <- function(coordVec, country, returnMultiple = FALSE, filterByLand = T
 	allcoords[7,] <- c(lat*-1, long*-1)
 	
 	#but remove nonsensical coordinates
-	bb <- SpatialPoints(matrix(c(-180, -90, 180, 90), nrow=2, ncol=2, byrow=TRUE), proj4string=CRS('+proj=longlat +datum=WGS84'))
-	bb <- sp::spTransform(bb, CRS(proj))
-	bb <- bbox(bb)
+	bb <- sf::st_as_sf(data.frame(matrix(c(-180, -90, 180, 90), nrow=2, ncol=2, byrow=TRUE)), coords = 1:2, crs = 4326)
+	bb <- sf::st_transform(bb, crs = crs)
+	bb <- sf::st_bbox(bb)
 
-	drop <- union(which(allcoords[,'lat'] > bb[2,2]), which(allcoords[,'lat'] < bb[2,1]))
-	if (length(drop) > 0) {allcoords <- allcoords[-drop,]}
+	drop <- union(which(allcoords[,'lat'] > bb['ymax']), which(allcoords[,'lat'] < bb['ymin']))
+	if (length(drop) > 0) allcoords <- allcoords[-drop,]
 	
 	# also, remove options that don't fall on land
 	if (filterByLand) {
-		allcoords <- allcoords[filterByLand(allcoords, proj = proj),]
+		allcoords <- allcoords[filterByLand(allcoords, crs = crs),]
 	}
 	
 	if (inherits(allcoords, 'numeric')) {
@@ -100,7 +97,7 @@ flipSign <- function(coordVec, country, returnMultiple = FALSE, filterByLand = T
 		return(list(matched = FALSE, newcoords = NA))
 	}
 
-	allcountries <- lapply(1:nrow(allcoords), function(x) closestCountry(allcoords[x,], proj = proj))
+	allcountries <- lapply(1:nrow(allcoords), function(x) closestCountry(allcoords[x,], crs = crs))
 
 	if (country %in% unlist(allcountries)) {
 		match <- lapply(allcountries, function(x) country %in% x)

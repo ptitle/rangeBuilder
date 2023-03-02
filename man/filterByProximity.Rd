@@ -4,16 +4,13 @@
 \alias{filterByProximity}
 \title{Filter by proximity}
 \usage{
-filterByProximity(xy, dist, mapUnits = FALSE, returnIndex = FALSE)
+filterByProximity(xy, dist, returnIndex = FALSE)
 }
 \arguments{
-\item{xy}{longitude and latitude in decimal degrees, either as class
-matrix, SpatialPoints or SpatialPointsDataFrame.}
+\item{xy}{longitude and latitude in decimal degrees, either as a matrix,
+dataframe, or spatial points object.}
 
-\item{dist}{minimum allowed distance}
-
-\item{mapUnits}{if \code{TRUE}, distance is interpreted in map units,
-distance in kilometers if \code{FALSE}}
+\item{dist}{minimum allowed distance in km}
 
 \item{returnIndex}{if \code{TRUE}, will return indices of points that would
 be dropped, if \code{FALSE}, returns the points that satisfy the distance
@@ -40,10 +37,22 @@ data(crotalus)
 
 subset <- crotalus[1:100,]
 tooClose <- filterByProximity(xy= subset[ ,c('decimallongitude','decimallatitude')], 
-	dist=20, mapUnits = FALSE, returnIndex = TRUE)
+	dist=20, returnIndex = TRUE)
 
 plot(subset[ ,c('decimallongitude','decimallatitude')], pch=1, col='blue', cex=1.5)
 points(subset[tooClose, c('decimallongitude','decimallatitude')], pch=20, col='red')
+
+
+# testing different input options
+samp <- sample(1:nrow(crotalus), 100)
+xy <- crotalus[samp, c('decimallongitude', 'decimallatitude')]
+sfpts <- sf::st_as_sf(xy, coords = c('decimallongitude', 'decimallatitude'), crs = 4326)
+sfptsEA <- sf::st_transform(sfpts, crs = '+proj=eqearth')
+spPts <- as(sfpts, 'Spatial')
+filterByProximity(xy, dist=20, returnIndex = TRUE)
+filterByProximity(sfpts, dist=20, returnIndex = TRUE)
+filterByProximity(sfptsEA, dist=20, returnIndex = TRUE)
+filterByProximity(spPts, dist=20, returnIndex = TRUE)
 
 }
 \author{

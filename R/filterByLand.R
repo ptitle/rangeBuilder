@@ -8,9 +8,9 @@
 ##' by 2 km.
 ##' 
 ##' @param coords coordinates in the form of a 2 column numeric matrix,
-##' data.frame, numeric vector, or SpatialPoints object. If Spatial object,
-##' proj4string must be specified.
-##' @param proj proj4string of input coords. Ignored if input coords are
+##' data.frame, numeric vector, or spatial points object (sf or sp). 
+##' If spatial object, crs must be defined.
+##' @param crs crs of input coords. Ignored if input coords are
 ##' spatial object.
 ##' @return returns a logical vector where \code{TRUE} means the point falls on
 ##' land.
@@ -21,50 +21,56 @@
 ##' 
 ##' #identify points that fall off land
 ##' filterByLand(crotalus[,c('decimallongitude','decimallatitude')])
+##'
+##' 
+##' # testing different input options
+##' samp <- sample(1:nrow(crotalus), 10)
+##' xy <- crotalus[samp, c('decimallongitude', 'decimallatitude')]
+##' sfpts <- sf::st_as_sf(xy, coords = c('decimallongitude', 'decimallatitude'), crs = 4326)
+##' sfptsEA <- sf::st_transform(sfpts, crs = '+proj=eqearth')
+##' spPts <- as(sfpts, 'Spatial')
+##' filterByLand(xy)
+##' filterByLand(sfpts)
+##' filterByLand(sfptsEA)
+##' filterByLand(spPts)
 ##' 
 ##' @export
 
-filterByLand <- function(coords, proj = '+proj=longlat +datum=WGS84') {
+filterByLand <- function(coords, crs = 4326) {
 
 	# if vector, convert to matrix
 	if (is.null(dim(coords))) {
 		coords <- matrix(coords, nrow = 1, ncol = 2)
 	}
-
-	if (inherits(coords, 'data.frame')) {
-		coords <- as.matrix(coords)
+	
+	if (!inherits(coords, c('SpatialPoints', 'SpatialPointsDataFrame', 'sf', 'sfc'))) {
+		if (is.na(crs)) stop('If coords is not a spatial object, then crs must be provided.')
+		
+		# if vector, convert to matrix
+		if (is.null(dim(coords))) {
+			coords <- matrix(coords, nrow = 1, ncol = 2)
+		}
+		
+		coords <- sf::st_as_sf(as.data.frame(coords), coords = 1:2, crs = crs)
 	}
 
 	if (any(inherits(coords, c('SpatialPoints', 'SpatialPointsDataFrame')))) {
-		
-		if (is.na(proj4string(coords))) {
-			stop('proj4string must be specified for spatial input.')
-		}
-
-		# transform if needed
-		if (proj4string(worldRaster) != proj) {
-			coords <- sp::spTransform(coords, CRS(proj4string(worldRaster)))
-		}
-
-		# convert to matrix
-		coords <- as.matrix(as.data.frame(coords))
+		coords <- sf::st_as_sf(coords)
 	}
-
-	if (inherits(coords, 'matrix') & proj4string(worldRaster) != proj) {
-
-		#transform
-		coords <- SpatialPoints(coords, CRS(proj))
-		coords <- sp::spTransform(coords, CRS(proj4string(worldRaster)))
-		coords <- as.matrix(as.data.frame(coords))
+	
+	if (is.na(sf::st_crs(coords))) {
+		stop('crs must be specified for spatial input.')
 	}
-
-	if (!inherits(coords, 'matrix') | mode(coords) != 'numeric') {
-		stop('coords must be a numeric matrix.')
-	}
-
+	
+	# transform to longlat
+	coords <- sf::st_transform(coords, crs = 4326)
+	
+	coords <- sf::st_coordinates(coords)[, 1:2]
+	
 	#extract worldRaster values
-	e <- raster::extract(worldRaster, coords)
+	e <- terra::extract(terra::rast(worldRaster), coords)[,1]
 	e <- as.logical(e)
 
-	return(e)	
+	return(e)
 }
+

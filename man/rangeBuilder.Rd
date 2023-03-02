@@ -5,9 +5,8 @@
 \alias{rangeBuilder}
 \title{rangeBuilder}
 \description{
-Provides tools for filtering occurrence records, standardizing countries and 
-species names, generating alpha-hull-derived range polygons and mapping species 
-distributions.
+Provides tools for filtering occurrence records, standardizing countries names, 
+generating alpha-hull-derived range polygons and mapping species distributions.
 }
 \references{
 Davis Rabosky, A.R., C.L. Cox, D.L. Rabosky, P.O. Title, I.A. Holmes, A. Feldman and J.A. 

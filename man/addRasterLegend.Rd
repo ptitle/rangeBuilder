@@ -111,18 +111,6 @@ A number of predefined locations exist in this function to make it easy to
 	the figure, horizontally centered.  
 	See examples.
 }
-\examples{
-library(raster)
-r <- raster(system.file("external/test.grd", package="raster"))
-
-plot(r, legend = FALSE)
-addRasterLegend(r, location = 'right')
-addRasterLegend(r, location = 'top')
-
-# fine-tune placement
-plot(r, legend = FALSE)
-addRasterLegend(r, location=c(181000, 181100, 330500, 331500), side = 4)
-}
 \author{
 Pascal Title
 }

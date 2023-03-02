@@ -8,12 +8,12 @@ rasterStackFromPolyList(
   polyList,
   resolution = 50000,
   retainSmallRanges = TRUE,
-  extent = "auto",
-  nthreads = 1
+  extent = "auto"
 )
 }
 \arguments{
-\item{polyList}{a list of SpatialPolygon objects, named with taxon names}
+\item{polyList}{a list of spatial polygon objects, named with taxon names. 
+It is assumed that all items in last have same crs.}
 
 \item{resolution}{vertical and horizontal size of raster cell, in units of
 the polygons' projection}
@@ -24,17 +24,13 @@ preserved. See details.}
 \item{extent}{if 'auto', then the maximal extent of the polygons will be
 used.  If not auto, must be a numeric vector of length 4 with minLong,
 maxLong, minLat, maxLat.}
-
-\item{nthreads}{number of threads to use for parallelization of the
-function. The R package \code{parallel} must be loaded for \code{nthreads >
-1}.}
 }
 \value{
-an object of class \code{RasterStack} where all rasters contain
+an object of class \code{SpatRaster} where all rasters contain
 values of either NA or 1.
 }
 \description{
-Takes a list of polygons and creates a rasterStack.
+Takes a list of polygons and creates a multi-layer SpatRaster.
 }
 \details{
 In the rasterization process, all cells for which the polygon covers the
@@ -49,13 +45,15 @@ found in will be considered as present.
 
 \dontrun{
 data(crotalus)
-
-# standardize species names
-crotalus$genSp <- synonymMatch(crotalus$genSp, db='squam')
+library(sf)
+library(terra)
 
 # get 10 species occurrence sets
-uniqueSp <- unique(crotalus$genSp)[1:10]
-uniqueSp <- uniqueSp[complete.cases(uniqueSp)]
+uniqueSp <- split(crotalus, crotalus$genSp)
+uniqueSp <- lapply(uniqueSp, function(x) 
+	x[!duplicated(x[, c('decimallongitude', 'decimallatitude')]),])
+uniqueSp <- names(uniqueSp[sapply(uniqueSp, nrow) > 5])
+uniqueSp <- uniqueSp[1:10]
 
 # create range polygons
 ranges <- vector('list', length = length(uniqueSp))
@@ -72,14 +70,14 @@ names(ranges) <- uniqueSp
 # keep only the polygons
 ranges <- lapply(ranges, function(x) x[[1]])
 
-# Create a rasterStack with the extent inferred from the polygons, and a cell
+# Create a SpatRaster with the extent inferred from the polygons, and a cell
 # resolution of 0.2 degrees.
 # cells with the presence of a species get a value of 1, NA if absent. 
 
 rangeStack <- rasterStackFromPolyList(ranges, resolution = 0.2)
 
 # calculate species richness per cell, where cell values are counts of species
-richnessRaster <- calc(rangeStack, fun=sum, na.rm = TRUE)
+richnessRaster <- app(rangeStack, fun=sum, na.rm = TRUE)
 
 # set values of 0 to NA
 richnessRaster[richnessRaster == 0] <- NA
@@ -88,7 +86,9 @@ richnessRaster[richnessRaster == 0] <- NA
 ramp <- colorRampPalette(c('blue','yellow','red'))
 plot(richnessRaster, col=ramp(100))
 
-plot(gshhs, add = TRUE, lwd=0.5)
+# to add a basic coastline, you can use the internal map
+# world <- rangeBuilder:::loadWorldMap()
+# plot(world, add = TRUE, lwd = 0.5)
 
 }
 

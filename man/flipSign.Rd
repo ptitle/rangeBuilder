@@ -9,7 +9,7 @@ flipSign(
   country,
   returnMultiple = FALSE,
   filterByLand = TRUE,
-  proj = "+proj=longlat +datum=WGS84"
+  crs = 4326
 )
 }
 \arguments{
@@ -24,7 +24,7 @@ needed sign flips.}
 \item{filterByLand}{if \code{TRUE}, alternative coords will be tested for
 whether or not they fall on land.}
 
-\item{proj}{the proj4string of the coordinate.}
+\item{crs}{the crs of the coordinate.}
 }
 \value{
 list with 2 elements \item{matched}{ logical: Was the country

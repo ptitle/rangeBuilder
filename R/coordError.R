@@ -37,64 +37,7 @@
 ##' @export
  
 coordError <- function(coords, nthreads = 1) {
-		
-	calcError <- function(xy) {
-		# determine number of decimal places
-		if (any(is.na(xy))) {
-			return(NA)
-		} else {
-			if (grepl('\\.', xy[1])) {
-				longDecPlaces <- nchar(strsplit(xy[1], '\\.')[[1]][2])
-			} else {
-				xy[1] <- paste0(xy[1], '.')
-				longDecPlaces <- 0
-			}
-			if (grepl('\\.', xy[2])) {
-				latDecPlaces <- nchar(strsplit(xy[2], '\\.')[[1]][2])
-			} else {
-				xy[2] <- paste0(xy[2], '.')
-				latDecPlaces <- 0
-			}
 			
-			maxDec <- max(longDecPlaces, latDecPlaces)
-			
-			# min coords
-			minCoords <- vector('character', length = 2)
-			if (maxDec - longDecPlaces > 0) {
-				minCoords[1] <- paste0(xy[1], paste(rep('0', maxDec - longDecPlaces), collapse = ''), '0')
-			} else {
-				minCoords[1] <- paste0(xy[1], '0')
-			}
-		
-			if (maxDec - latDecPlaces > 0) {
-				minCoords[2] <- paste0(xy[2], paste(rep('0', maxDec - latDecPlaces), collapse = ''), '0')
-			} else {
-				minCoords[2] <- paste0(xy[2], '0')
-			}
-		
-			# max coords
-			maxCoords <- vector('character', length = 2)
-			if (maxDec - longDecPlaces > 0) {
-				maxCoords[1] <- paste0(xy[1], paste(rep('0', maxDec - longDecPlaces), collapse = ''), '9')
-			} else {
-				maxCoords[1] <- paste0(xy[1], '9')
-			}
-		
-			if (maxDec - latDecPlaces > 0) {
-				maxCoords[2] <- paste0(xy[2], paste(rep('0', maxDec - latDecPlaces), collapse = ''), '9')
-			} else {
-				maxCoords[2] <- paste0(xy[2], '9')
-			}
-			
-			# calculate distance
-			pts <- SpatialPoints(rbind(as.numeric(minCoords), as.numeric(maxCoords)), proj4string = CRS('+proj=longlat +datumWGS84'))
-			
-			pts <- sp::spTransform(pts, CRS('+proj=cea +lon_0=0 +lat_ts=30 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs'))
-			
-			return(rgeos::gDistance(pts[1], pts[2]))
-		}
-	}
-	
 	scipenVal <- getOption('scipen')
 	options('scipen' = 999)
 	
@@ -148,8 +91,9 @@ coordError <- function(coords, nthreads = 1) {
 		
 		if (nthreads > 1) {
 			cl <- parallel::makePSOCKcluster(nthreads)
-			parallel::clusterExport(cl = cl, varlist = c('coords', 'calcError', 'SpatialPoints', 'CRS', 'spTransform'), envir = environment())
-			parallel::clusterExport(cl = cl, varlist = 'gDistance', envir = environment(rgeos::gDistance))
+			parallel::clusterExport(cl = cl, varlist = c('coords', 'calcError'), envir = environment())
+			parallel::clusterExport(cl = cl, varlist = 'st_as_sf', envir = environment(sf::st_as_sf))
+			parallel::clusterExport(cl = cl, varlist = 'st_distance', envir = environment(sf::st_distance))
 			res <- pbapply::pbapply(coords, 1, calcError, cl = cl)
 			parallel::stopCluster(cl)
 		} else {
@@ -165,8 +109,63 @@ coordError <- function(coords, nthreads = 1) {
 }
 	
 	
+
+calcError <- function(xy) {
+	# determine number of decimal places
+	if (anyNA(xy)) {
+		return(NA)
+	} else {
+		if (grepl('\\.', xy[1])) {
+			longDecPlaces <- nchar(strsplit(xy[1], '\\.')[[1]][2])
+		} else {
+			xy[1] <- paste0(xy[1], '.')
+			longDecPlaces <- 0
+		}
+		if (grepl('\\.', xy[2])) {
+			latDecPlaces <- nchar(strsplit(xy[2], '\\.')[[1]][2])
+		} else {
+			xy[2] <- paste0(xy[2], '.')
+			latDecPlaces <- 0
+		}
+		
+		maxDec <- max(longDecPlaces, latDecPlaces)
+		
+		# min coords
+		minCoords <- vector('character', length = 2)
+		if (maxDec - longDecPlaces > 0) {
+			minCoords[1] <- paste0(xy[1], paste(rep('0', maxDec - longDecPlaces), collapse = ''), '0')
+		} else {
+			minCoords[1] <- paste0(xy[1], '0')
+		}
 	
+		if (maxDec - latDecPlaces > 0) {
+			minCoords[2] <- paste0(xy[2], paste(rep('0', maxDec - latDecPlaces), collapse = ''), '0')
+		} else {
+			minCoords[2] <- paste0(xy[2], '0')
+		}
 	
+		# max coords
+		maxCoords <- vector('character', length = 2)
+		if (maxDec - longDecPlaces > 0) {
+			maxCoords[1] <- paste0(xy[1], paste(rep('0', maxDec - longDecPlaces), collapse = ''), '9')
+		} else {
+			maxCoords[1] <- paste0(xy[1], '9')
+		}
+	
+		if (maxDec - latDecPlaces > 0) {
+			maxCoords[2] <- paste0(xy[2], paste(rep('0', maxDec - latDecPlaces), collapse = ''), '9')
+		} else {
+			maxCoords[2] <- paste0(xy[2], '9')
+		}
+		
+		# calculate distance
+		pts <- sf::st_as_sf(rbind.data.frame(as.numeric(minCoords), as.numeric(maxCoords)), coords = 1:2, crs = 4326)
+
+		# returns meters for longlat
+		return(sf::st_distance(pts[1,], pts[2,]))
+	}
+}
+
 
 
 
