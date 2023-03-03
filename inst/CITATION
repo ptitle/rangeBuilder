@@ -1,17 +1,20 @@
-citHeader("To cite the rangeBuilder package in publications, please use:")
-
-citEntry(entry="Article",
-         title = "Coral snakes predict the evolution of mimicry across New World snakes",
-         author = personList(as.person("AR Davis Rabosky"),
-         as.person("CL Cox"),
-         as.person("DL Rabosky"),
-         as.person("PO Title"),
-         as.person("IA Holmes"),
-         as.person("A Feldman"),
-         as.person("JA McGuire")),
-	 journal = "Nature Communications",
+bibentry(bibtype = 'Article',
+        title = "Coral snakes predict the evolution of mimicry across New World snakes",
+        author = c(person("Alison", "Davis Rabosky"),
+         person("Christian", "Cox"),
+         person("Daniel", "Rabosky"),
+         person("Pascal", "Title"),
+         person("Iris", "Holmes"),
+         person("Anat", "Feldman"),
+         person("Jimmy", "McGuire")),
+         journal = "Nature Communications",
          year = "2016",
          volume = "7",
          pages = "11484",
-         textVersion = "Alison R. Davis Rabosky, Christian L. Cox, Daniel L. Rabosky, Pascal O. Title, Iris A. Holmes, Anat Feldman and Jimmy A. McGuire. 2016. Coral snakes predict the evolution of mimicry across New World snakes. Nature Communications 7:11484.")
+         doi = "10.1038/ncomms11484",
+         header = "To cite the rangeBuilder package in publications, please use:"
+)
+
+
+
 
