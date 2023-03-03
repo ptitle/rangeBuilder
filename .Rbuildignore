@@ -1,1 +1,4 @@
 ^\.travis\.yml$
+^\.github$
+^LICENSE\.md$
+^README\.md$
