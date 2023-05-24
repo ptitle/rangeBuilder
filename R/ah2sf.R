@@ -108,17 +108,22 @@ ah2sf <- function(x, increment = 360, rnd = 10, crs = 4326, tol = 1e-4) {
 		
 		# drop empty line geometries
 		linesj <- linesj[which(sf::st_is_empty(linesj) == FALSE),]
+
+		# Drop lines that will not produce adequate polygons (Pascal Title addition 9 Dec 2013, updated 24 May 2023 for sf)
+		badLines <- integer()
+		for (i in 1:nrow(linesj)) {
+			tmp <- sf::st_cast(linesj[i,], 'POINT', warn = FALSE)
+			if (nrow(tmp) < 4) {
+				badLines <- c(badLines, i)
+			}
+		}
+		
+		if (length(badLines) > 0) {
+			linesj <- linesj[-badLines, ] 
+		}
 		
 		res <- sf::st_geometry(sf::st_cast(linesj, 'POLYGON'))
 		
-		#Drop lines that will not produce adequate polygons (Pascal Title addition 9 Dec 2013)
-		# badLines <- vector()
-		# for (i in 1:length(linesj)){
-			# if (nrow(linesj[[i]]@Lines[[1]]@coords) < 4){
-				# badLines <- c(badLines,i)
-			# }
-		# }
-		# if (length(badLines) > 0) linesj <- linesj[-badLines] 
 		
 		# # Promote to SpatialLines
 		# lspl <- SpatialLines(linesj)
