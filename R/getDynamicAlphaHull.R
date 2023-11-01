@@ -94,31 +94,28 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 	#continue until fraction is reached
 	alpha <- initialAlpha
 	problem <- FALSE
-	if (verbose) cat('\talpha:', alpha, '\n')
+	if (verbose) message('\talpha: ', alpha, '\n')
 
 
 	hull <- try(alphahull::ahull(sf::st_coordinates(x), alpha = alpha), silent = TRUE)
 	
 	# possible that ahull is detecting duplicate points despite previous checks
-	dropPt <- c()
+	dropPt <- matrix(nrow = 0, ncol = 2)
 	while (inherits(hull, 'try-error') & any(grepl('duplicate points', hull))) {
 		ptDist <- sf::st_distance(x, x)
 		diag(ptDist) <- NA
 		units(ptDist) <- NULL
 		closest <- which(ptDist == min(ptDist, na.rm = TRUE), arr.ind = TRUE)
-		hull <- try(alphahull::ahull(sf::st_coordinates(x)[- closest[1,1]], alpha = alpha), silent = TRUE)
-		if (inherits(hull, 'ahull')) {
-			dropPt <- closest[1,1]
-		}
-	}
-	if (length(dropPt) > 0) {
-		x <- x[- dropPt,]
+		dropPt <- rbind(dropPt, sf::st_coordinates(x)[closest[1,1], ])
+		x <- x[- closest[1,1], ]
+		hull <- try(alphahull::ahull(sf::st_coordinates(x), alpha = alpha), silent = TRUE)
+		if (verbose) message('\t\tdropping a point...')
 	}
 	
 	hull <- try(alphahull::ahull(sf::st_coordinates(x), alpha = alpha), silent = TRUE)
 	
 	while (inherits(hull, 'try-error')) {
-		if (verbose) {cat('\talpha:', alpha, '\n')}
+		if (verbose) message('\talpha:', alpha, '\n')
 		alpha <- alpha + alphaIncrement
 		hull <- try(alphahull::ahull(sf::st_coordinates(x), alpha = alpha), silent = TRUE)
 		if (alpha > alphaCap) {
@@ -145,7 +142,7 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 
 		while (is.null(hull) | inherits(hull, 'try-error') | validityCheck(hull)) {
 			alpha <- alpha + alphaIncrement
-			if (verbose) {cat('\talpha:', alpha, '\n')}
+			if (verbose) message('\talpha: ', alpha, '\n')
 			hull <- try(ah2sf(alphahull::ahull(sf::st_coordinates(x), alpha = alpha)), silent = TRUE)
 			if (alpha > alphaCap) {
 				problem <- TRUE
@@ -163,7 +160,7 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 	
 		while (any(length(hull) > partCount, (sum(lengths(pointWithin)) / nrow(x)) < fraction, !all(sf::st_is_valid(hull)))) {
 		    alpha <- alpha + alphaIncrement
-		    if (verbose) {cat('\talpha:', alpha, '\n')}
+		    if (verbose) message('\talpha: ', alpha, '\n')
 		    hull <- try(alphahull::ahull(sf::st_coordinates(x), alpha = alpha), silent = TRUE)
 		    while (inherits(hull, 'try-error') & alpha <= alphaCap) {
 		      alpha <- alpha + alphaIncrement
@@ -181,7 +178,7 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 			}
 			alphaVal <- alpha
 			if (alpha > alphaCap) {
-				hull <- sf::st_convex_hull(x)
+				hull <- sf::st_convex_hull(sf::st_combine(x))
 				hull <- sf::st_transform(hull, crs = '+proj=eqearth')
 			    hull <- sf::st_buffer(hull, dist = buff)
 			    hull <- sf::st_transform(hull, crs = 4326)
@@ -191,7 +188,7 @@ getDynamicAlphaHull <- function(x, fraction = 0.95, partCount = 3, buff = 10000,
 			}
 		}
 	} else {
-		hull <- sf::st_convex_hull(x)
+		hull <- sf::st_convex_hull(sf::st_combine(x))
 		hull <- sf::st_transform(hull, crs = '+proj=eqearth')
 	    hull <- sf::st_buffer(hull, dist = buff)
 	    hull <- sf::st_transform(hull, crs = 4326)
