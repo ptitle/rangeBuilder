@@ -1,7 +1,7 @@
 Package: rangeBuilder
 Type: Package
 Title: Occurrence Filtering, Geographic Standardization and Generation of Species Range Polygons
-Version: 2.1
+Version: 2.2
 Authors@R: person("Pascal", "Title", email = "ptitle@umich.edu", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-6316-0736"))
 Imports: alphahull (>= 2.5), stringi, sf, terra, pbapply, units, rnaturalearth, methods, Rcpp (>= 0.12.9)
 Depends: R (>= 3.5.0)
@@ -13,5 +13,5 @@ NeedsCompilation: yes
 LinkingTo: Rcpp
 LazyData: true
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 ByteCompile: true

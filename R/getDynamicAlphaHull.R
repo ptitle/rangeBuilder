@@ -39,7 +39,7 @@
 ##' \item{alpha}{ the alpha value that was found to satisfy the criteria.  If a
 ##' convex hull was returned, this will list MCH.  }
 ##' @author Pascal Title
-##' @seealso Alpha hulls are created with \code{\link{ahull}}.
+##' @seealso Alpha hulls are created with \code{\link[alphahull]{ahull}}.
 ##' @examples
 ##' 
 ##' data(crotalus)

@@ -10,7 +10,6 @@
 ##' Communications 7:11484. 
 ##' 
 ##' @name rangeBuilder
-##' @docType package
 ##' 
 ##' 
 ##' @useDynLib rangeBuilder
@@ -30,4 +29,4 @@
 ##' 
 ##' 
 ##' 
-NULL
+"_PACKAGE"

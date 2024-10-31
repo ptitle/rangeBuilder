@@ -2,6 +2,7 @@
 % Please edit documentation in R/rangeBuilder-package.R
 \docType{package}
 \name{rangeBuilder}
+\alias{rangeBuilder-package}
 \alias{rangeBuilder}
 \title{rangeBuilder}
 \description{
@@ -12,6 +13,14 @@ generating alpha-hull-derived range polygons and mapping species distributions.
 Davis Rabosky, A.R., C.L. Cox, D.L. Rabosky, P.O. Title, I.A. Holmes, A. Feldman and J.A. 
 McGuire. 2016. Coral snakes predict the evolution of mimicry across New World snakes. Nature 
 Communications 7:11484.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/ptitle/rangeBuilder}
+  \item Report bugs at \url{https://github.com/ptitle/rangeBuilder/issues}
+}
+
 }
 \author{
 Pascal Title <ptitle@umich.edu>

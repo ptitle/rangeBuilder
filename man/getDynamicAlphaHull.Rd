@@ -89,7 +89,7 @@ points(x[,c('decimallongitude','decimallatitude')], cex = 0.5, pch = 3)
 
 }
 \seealso{
-Alpha hulls are created with \code{\link{ahull}}.
+Alpha hulls are created with \code{\link[alphahull]{ahull}}.
 }
 \author{
 Pascal Title
